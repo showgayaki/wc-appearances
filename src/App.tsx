@@ -4,12 +4,15 @@ import { AdminPanel } from "./components/admin/AdminPanel";
 import { AuthPanel } from "./components/AuthPanel";
 import { DateRangeToolbar } from "./components/DateRangeToolbar";
 import { GeneratedTextPanel } from "./components/GeneratedTextPanel";
+import { PostHeaderSelect } from "./components/PostHeaderSelect";
 import { PublicPrograms } from "./components/PublicPrograms";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProgramData } from "./services/programs";
 import type { GuestProgram, PostHeader, RegularProgram } from "./types";
 import { getDefaultEndYmd, getTodayYmd } from "./utils/date";
-import { buildGeneratedPrograms, findPostTitle, generateProgramText } from "./utils/generateText";
+import { buildGeneratedPrograms, generateProgramText } from "./utils/generateText";
+
+const defaultPostTitle = "🌈今週テレビ🌈";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -18,6 +21,8 @@ export default function App() {
   const [postHeaders, setPostHeaders] = useState<PostHeader[]>([]);
   const [startDate, setStartDate] = useState(getTodayYmd);
   const [endDate, setEndDate] = useState(getDefaultEndYmd);
+  const [selectedPostHeaderId, setSelectedPostHeaderId] = useState("");
+  const [selectedProgramIds, setSelectedProgramIds] = useState<Set<string>>(new Set());
   const [generatedText, setGeneratedText] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -71,9 +76,25 @@ export default function App() {
   }, [loadData]);
 
   useEffect(() => {
-    const title = findPostTitle(postHeaders);
-    setGeneratedText(generateProgramText(title, generatedItems));
-  }, [generatedItems, postHeaders]);
+    setSelectedProgramIds(new Set(generatedItems.map((item) => item.id)));
+  }, [generatedItems]);
+
+  useEffect(() => {
+    if (!selectedPostHeaderId && postHeaders.length > 0) {
+      setSelectedPostHeaderId(postHeaders[0].id);
+      return;
+    }
+
+    if (selectedPostHeaderId && !postHeaders.some((header) => header.id === selectedPostHeaderId)) {
+      setSelectedPostHeaderId("");
+    }
+  }, [postHeaders, selectedPostHeaderId]);
+
+  const generateSelectedText = () => {
+    const selectedTitle = postHeaders.find((header) => header.id === selectedPostHeaderId)?.title.trim() || defaultPostTitle;
+    const selectedItems = generatedItems.filter((item) => selectedProgramIds.has(item.id));
+    setGeneratedText(generateProgramText(selectedTitle, selectedItems));
+  };
 
   return (
     <main className="app-shell">
@@ -97,16 +118,30 @@ export default function App() {
       <DateRangeToolbar
         startDate={startDate}
         endDate={endDate}
-        loading={loading}
-        canReload={isSupabaseConfigured}
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
-        onReload={() => void loadData()}
       />
 
-      <GeneratedTextPanel generatedText={generatedText} onGeneratedTextChange={setGeneratedText} />
+      <PostHeaderSelect
+        postHeaders={postHeaders}
+        selectedPostHeaderId={selectedPostHeaderId}
+        onSelectedPostHeaderIdChange={setSelectedPostHeaderId}
+      />
 
-      <PublicPrograms items={generatedItems} loading={loading} />
+      <PublicPrograms
+        items={generatedItems}
+        loading={loading}
+        selectedProgramIds={selectedProgramIds}
+        onSelectedProgramIdsChange={setSelectedProgramIds}
+      />
+
+      <div className="output-actions">
+        <button type="button" onClick={generateSelectedText} disabled={generatedItems.length === 0}>
+          出力
+        </button>
+      </div>
+
+      <GeneratedTextPanel generatedText={generatedText} onGeneratedTextChange={setGeneratedText} />
 
       {isLoggedIn && (
         <AdminPanel

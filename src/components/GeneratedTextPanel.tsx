@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type GeneratedTextPanelProps = {
   generatedText: string;
@@ -7,6 +7,17 @@ type GeneratedTextPanelProps = {
 
 export function GeneratedTextPanel({ generatedText, onGeneratedTextChange }: GeneratedTextPanelProps) {
   const [copyStatus, setCopyStatus] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [generatedText]);
 
   const copyText = async () => {
     await navigator.clipboard.writeText(generatedText);
@@ -23,9 +34,10 @@ export function GeneratedTextPanel({ generatedText, onGeneratedTextChange }: Gen
         </button>
       </div>
       <textarea
+        ref={textareaRef}
         value={generatedText}
         onChange={(event) => onGeneratedTextChange(event.target.value)}
-        rows={14}
+        rows={1}
         aria-label="生成された出演情報テキスト"
       />
       {copyStatus && <p className="status">{copyStatus}</p>}

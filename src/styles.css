@@ -1,6 +1,7 @@
 :root {
   color: #202124;
   background: #f6f7f9;
+  font-size: 15px;
   font-family:
     system-ui,
     -apple-system,
@@ -28,7 +29,10 @@ textarea {
 }
 
 button {
-  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
   border: 1px solid #1b4d89;
   border-radius: 6px;
   padding: 0 14px;
@@ -53,44 +57,47 @@ input,
 select,
 textarea {
   width: 100%;
+  min-width: 0;
   border: 1px solid #ccd3dc;
   border-radius: 6px;
-  padding: 10px 11px;
+  padding: 8px 10px;
   color: #202124;
   background: #ffffff;
 }
 
 textarea {
-  min-height: 300px;
+  min-height: 180px;
+  overflow: hidden;
   resize: vertical;
   line-height: 1.6;
 }
 
 label {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   color: #4d5560;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 600;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 680px;
+  min-width: 620px;
 }
 
 th,
 td {
   border-bottom: 1px solid #e2e6eb;
-  padding: 11px 10px;
+  padding: 9px 8px;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 th {
   color: #5d6672;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   background: #f8f9fb;
 }
@@ -98,7 +105,7 @@ th {
 .app-shell {
   width: min(1120px, 100%);
   margin: 0 auto;
-  padding: 20px;
+  padding: 16px;
 }
 
 .page-header {
@@ -125,17 +132,17 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-size: clamp(1.45rem, 4vw, 2.1rem);
 }
 
 h2 {
   margin-bottom: 0;
-  font-size: 1.25rem;
+  font-size: 1.08rem;
 }
 
 h3 {
-  margin-bottom: 14px;
-  font-size: 1rem;
+  margin-bottom: 12px;
+  font-size: 0.96rem;
 }
 
 .auth-box,
@@ -168,19 +175,46 @@ h3 {
 }
 
 .toolbar {
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.date-range-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
   align-items: end;
-  gap: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.date-range-row label {
+  min-width: 0;
+}
+
+.date-range-row input[type="date"] {
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range-separator {
+  padding-bottom: 9px;
+  color: #68717d;
+  font-weight: 700;
+}
+
+.header-select-panel {
+  border: 1px solid #d9dfe7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #ffffff;
 }
 
 .text-panel,
 .list-panel,
 .admin-panel {
-  padding: 18px;
-  margin-bottom: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
 }
 
 .notice {
@@ -198,7 +232,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .status {
@@ -221,6 +255,21 @@ h3 {
 
 .table-wrap {
   overflow-x: auto;
+}
+
+.check-column {
+  width: 48px;
+  text-align: center;
+}
+
+.check-column input {
+  width: auto;
+}
+
+.output-actions {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 12px;
 }
 
 .admin-grid {
@@ -303,7 +352,6 @@ h3 {
 
 @media (max-width: 860px) {
   .page-header,
-  .toolbar,
   .admin-grid {
     grid-template-columns: 1fr;
   }
@@ -318,14 +366,37 @@ h3 {
 }
 
 @media (max-width: 560px) {
+  :root {
+    font-size: 14px;
+  }
+
   .app-shell {
-    padding: 14px;
+    padding: 10px;
+  }
+
+  .page-header {
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
   .text-panel,
   .list-panel,
   .admin-panel {
-    padding: 14px;
+    padding: 12px;
+  }
+
+  .toolbar,
+  .header-select-panel {
+    padding: 10px;
+  }
+
+  table {
+    min-width: 560px;
+  }
+
+  th,
+  td {
+    padding: 8px 7px;
   }
 
   .form-row,

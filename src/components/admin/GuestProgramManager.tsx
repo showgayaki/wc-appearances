@@ -65,7 +65,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
   };
 
   const remove = async (id: string) => {
-    if (!window.confirm("この単発出演を削除しますか？")) {
+    if (!window.confirm("このゲスト出演を削除しますか？")) {
       return;
     }
 
@@ -81,7 +81,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
 
   return (
     <div className="manager">
-      <h3>単発出演</h3>
+      <h3>ゲスト出演</h3>
       <form onSubmit={(event) => void submit(event)}>
         <label>
           日付
@@ -98,7 +98,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
           </label>
         </div>
         <label>
-          局名
+          局
           <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
         </label>
         <label>

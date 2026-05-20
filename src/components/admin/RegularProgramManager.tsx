@@ -114,7 +114,7 @@ export function RegularProgramManager({ items, onChanged }: RegularProgramManage
           </label>
         </div>
         <label>
-          局名
+          局
           <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
         </label>
         <label>
