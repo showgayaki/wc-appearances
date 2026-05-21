@@ -14,8 +14,6 @@ import type { GuestProgram, PostHeader, RegularProgram } from "./types";
 import { getDefaultEndYmd, getTodayYmd } from "./utils/date";
 import { buildGeneratedPrograms, generateProgramText } from "./utils/generateText";
 
-const defaultPostTitle = "🌈今週テレビ🌈";
-
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [regularPrograms, setRegularPrograms] = useState<RegularProgram[]>([]);
@@ -83,18 +81,13 @@ export default function App() {
   }, [generatedItems]);
 
   useEffect(() => {
-    if (!selectedPostHeaderId && postHeaders.length > 0) {
-      setSelectedPostHeaderId(postHeaders[0].id);
-      return;
-    }
-
     if (selectedPostHeaderId && !postHeaders.some((header) => header.id === selectedPostHeaderId)) {
       setSelectedPostHeaderId("");
     }
   }, [postHeaders, selectedPostHeaderId]);
 
   const generateSelectedText = () => {
-    const selectedTitle = postHeaders.find((header) => header.id === selectedPostHeaderId)?.title.trim() || defaultPostTitle;
+    const selectedTitle = selectedPostHeaderId ? postHeaders.find((header) => header.id === selectedPostHeaderId)?.title.trim() ?? "" : "";
     const selectedItems = generatedItems.filter((item) => selectedProgramIds.has(item.id));
     setGeneratedText(generateProgramText(selectedTitle, selectedItems));
   };

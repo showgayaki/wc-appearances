@@ -5,7 +5,7 @@ import type { PostHeader, PostHeaderInput } from "../../types";
 import { AdminEditModal } from "./AdminEditModal";
 
 const emptyPostHeader = (): PostHeaderInput => ({
-  title: "🌈今週テレビ🌈",
+  title: "",
 });
 
 const requireText = (value: string): string => value.trim();

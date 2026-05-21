@@ -1,7 +1,5 @@
-import type { GeneratedProgram, GuestProgram, PostHeader, RegularProgram } from "../types";
+import type { GeneratedProgram, GuestProgram, RegularProgram } from "../types";
 import { formatDisplayDate, getDatesInRange, getWeekday, timeToMinutes } from "./date";
-
-const defaultTitle = "🌈今週テレビ🌈";
 
 export const buildGeneratedPrograms = (
   regularPrograms: RegularProgram[],
@@ -44,15 +42,12 @@ export const buildGeneratedPrograms = (
   });
 };
 
-export const findPostTitle = (headers: PostHeader[]): string => {
-  return headers[0]?.title.trim() || defaultTitle;
-};
-
 export const generateProgramText = (title: string, items: GeneratedProgram[]): string => {
   const blocks = items.map((item) => {
     const date = formatDisplayDate(item.date);
     return `${date}${item.startTime}〜${item.endTime}\n${item.stationName}「${item.programName}」`;
   });
 
-  return [title, ...blocks].join("\n\n");
+  const titleBlock = title.trim();
+  return [titleBlock, ...blocks].filter((block) => block.length > 0).join("\n\n");
 };
