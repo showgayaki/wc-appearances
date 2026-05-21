@@ -1,8 +1,9 @@
 import { FormEvent, useState } from "react";
+import { FiEdit } from "react-icons/fi";
 import { deleteGuestProgram, saveGuestProgram } from "../../services/programs";
 import type { GuestProgram, GuestProgramInput } from "../../types";
 import { getTodayYmd } from "../../utils/date";
-import { ItemList } from "./ItemList";
+import { AdminEditModal } from "./AdminEditModal";
 
 const emptyGuestProgram = (): GuestProgramInput => ({
   program_date: getTodayYmd(),
@@ -23,6 +24,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<GuestProgramInput>(emptyGuestProgram);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,6 +52,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
 
     setEditingId(null);
     setForm(emptyGuestProgram());
+    setIsModalOpen(false);
     onChanged();
   };
 
@@ -62,6 +65,15 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
       station_name: item.station_name,
       program_name: item.program_name,
     });
+    setError("");
+    setIsModalOpen(true);
+  };
+
+  const create = () => {
+    setEditingId(null);
+    setForm(emptyGuestProgram());
+    setError("");
+    setIsModalOpen(true);
   };
 
   const remove = async (id: string) => {
@@ -76,60 +88,91 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
       return;
     }
 
+    setEditingId(null);
+    setForm(emptyGuestProgram());
+    setIsModalOpen(false);
     onChanged();
   };
 
   return (
     <div className="manager">
-      <h3>ゲスト出演</h3>
-      <form onSubmit={(event) => void submit(event)}>
-        <label>
-          日付
-          <input type="date" value={form.program_date} onChange={(event) => setForm({ ...form, program_date: event.target.value })} />
-        </label>
-        <div className="form-row">
-          <label>
-            開始
-            <input value={form.start_time} onChange={(event) => setForm({ ...form, start_time: event.target.value })} placeholder="24:45" />
-          </label>
-          <label>
-            終了
-            <input value={form.end_time} onChange={(event) => setForm({ ...form, end_time: event.target.value })} placeholder="25:15" />
-          </label>
+      <div className="manager-heading">
+        <h3>ゲスト出演</h3>
+        <button type="button" onClick={create}>
+          追加
+        </button>
+      </div>
+      {items.length === 0 ? (
+        <p className="empty">まだ登録がありません。</p>
+      ) : (
+        <div className="table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th className="sticky-action-column">編集</th>
+                <th>日付</th>
+                <th>時間</th>
+                <th>局</th>
+                <th>番組名</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+                  <td className="sticky-action-column">
+                    <button type="button" className="icon-button" aria-label={`${item.program_name}を編集`} onClick={() => edit(item)}>
+                      <FiEdit aria-hidden="true" />
+                    </button>
+                  </td>
+                  <td>{item.program_date}</td>
+                  <td>
+                    {item.start_time}〜{item.end_time}
+                  </td>
+                  <td>{item.station_name}</td>
+                  <td>{item.program_name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <label>
-          局
-          <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
-        </label>
-        <label>
-          番組名
-          <input value={form.program_name} onChange={(event) => setForm({ ...form, program_name: event.target.value })} />
-        </label>
-        <div className="button-row">
-          <button type="submit">{editingId ? "更新" : "追加"}</button>
-          {editingId && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditingId(null);
-                setForm(emptyGuestProgram());
-              }}
-            >
-              キャンセル
-            </button>
-          )}
-        </div>
-        {error && <p className="error">{error}</p>}
-      </form>
-      <ItemList
-        items={items.map((item) => ({
-          id: item.id,
-          label: `${item.program_date} ${item.start_time}〜${item.end_time} ${item.station_name}「${item.program_name}」`,
-          muted: false,
-          onEdit: () => edit(item),
-          onDelete: () => void remove(item.id),
-        }))}
-      />
+      )}
+      {isModalOpen && (
+        <AdminEditModal title={editingId ? "ゲスト出演を編集" : "ゲスト出演を追加"} onClose={() => setIsModalOpen(false)}>
+          <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
+            <label>
+              日付
+              <input type="date" value={form.program_date} onChange={(event) => setForm({ ...form, program_date: event.target.value })} />
+            </label>
+            <div className="form-row">
+              <label>
+                開始
+                <input value={form.start_time} onChange={(event) => setForm({ ...form, start_time: event.target.value })} placeholder="24:45" />
+              </label>
+              <label>
+                終了
+                <input value={form.end_time} onChange={(event) => setForm({ ...form, end_time: event.target.value })} placeholder="25:15" />
+              </label>
+            </div>
+            <label>
+              局
+              <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
+            </label>
+            <label>
+              番組名
+              <input value={form.program_name} onChange={(event) => setForm({ ...form, program_name: event.target.value })} />
+            </label>
+            <div className="button-row">
+              <button type="submit">{editingId ? "更新" : "追加"}</button>
+              {editingId && (
+                <button type="button" onClick={() => void remove(editingId)}>
+                  削除
+                </button>
+              )}
+            </div>
+            {error && <p className="error">{error}</p>}
+          </form>
+        </AdminEditModal>
+      )}
     </div>
   );
 }

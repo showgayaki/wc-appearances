@@ -1,7 +1,8 @@
 import { FormEvent, useState } from "react";
+import { FiEdit } from "react-icons/fi";
 import { deletePostHeader, savePostHeader } from "../../services/programs";
 import type { PostHeader, PostHeaderInput } from "../../types";
-import { ItemList } from "./ItemList";
+import { AdminEditModal } from "./AdminEditModal";
 
 const emptyPostHeader = (): PostHeaderInput => ({
   title: "🌈今週テレビ🌈",
@@ -18,6 +19,7 @@ export function PostHeaderManager({ items, onChanged }: PostHeaderManagerProps) 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<PostHeaderInput>(emptyPostHeader);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -41,6 +43,7 @@ export function PostHeaderManager({ items, onChanged }: PostHeaderManagerProps) 
 
     setEditingId(null);
     setForm(emptyPostHeader());
+    setIsModalOpen(false);
     onChanged();
   };
 
@@ -49,6 +52,15 @@ export function PostHeaderManager({ items, onChanged }: PostHeaderManagerProps) 
     setForm({
       title: item.title,
     });
+    setError("");
+    setIsModalOpen(true);
+  };
+
+  const create = () => {
+    setEditingId(null);
+    setForm(emptyPostHeader());
+    setError("");
+    setIsModalOpen(true);
   };
 
   const remove = async (id: string) => {
@@ -63,42 +75,65 @@ export function PostHeaderManager({ items, onChanged }: PostHeaderManagerProps) 
       return;
     }
 
+    setEditingId(null);
+    setForm(emptyPostHeader());
+    setIsModalOpen(false);
     onChanged();
   };
 
   return (
     <div className="manager">
-      <h3>投稿見出し</h3>
-      <form onSubmit={(event) => void submit(event)}>
-        <label>
-          見出し
-          <input value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
-        </label>
-        <div className="button-row">
-          <button type="submit">{editingId ? "更新" : "追加"}</button>
-          {editingId && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditingId(null);
-                setForm(emptyPostHeader());
-              }}
-            >
-              キャンセル
-            </button>
-          )}
+      <div className="manager-heading">
+        <h3>投稿見出し</h3>
+        <button type="button" onClick={create}>
+          追加
+        </button>
+      </div>
+      {items.length === 0 ? (
+        <p className="empty">まだ登録がありません。</p>
+      ) : (
+        <div className="table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th className="sticky-action-column">編集</th>
+                <th>見出し</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+                  <td className="sticky-action-column">
+                    <button type="button" className="icon-button" aria-label={`${item.title}を編集`} onClick={() => edit(item)}>
+                      <FiEdit aria-hidden="true" />
+                    </button>
+                  </td>
+                  <td>{item.title}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        {error && <p className="error">{error}</p>}
-      </form>
-      <ItemList
-        items={items.map((item) => ({
-          id: item.id,
-          label: item.title,
-          muted: false,
-          onEdit: () => edit(item),
-          onDelete: () => void remove(item.id),
-        }))}
-      />
+      )}
+      {isModalOpen && (
+        <AdminEditModal title={editingId ? "投稿見出しを編集" : "投稿見出しを追加"} onClose={() => setIsModalOpen(false)}>
+          <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
+            <label>
+              見出し
+              <input value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+            </label>
+            <div className="button-row">
+              <button type="submit">{editingId ? "更新" : "追加"}</button>
+              {editingId && (
+                <button type="button" onClick={() => void remove(editingId)}>
+                  削除
+                </button>
+              )}
+            </div>
+            {error && <p className="error">{error}</p>}
+          </form>
+        </AdminEditModal>
+      )}
     </div>
   );
 }

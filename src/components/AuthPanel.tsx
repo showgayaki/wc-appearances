@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { isLoginConfigured, loginEmail, loginId, supabase } from "../lib/supabase";
 
 type AuthPanelProps = {
@@ -7,6 +7,7 @@ type AuthPanelProps = {
 };
 
 export function AuthPanel({ isLoggedIn, onLoggedOut }: AuthPanelProps) {
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -52,8 +53,28 @@ export function AuthPanel({ isLoggedIn, onLoggedOut }: AuthPanelProps) {
     onLoggedOut();
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const closeOnOutsidePointerDown = (event: PointerEvent) => {
+      if (menuRef.current?.contains(event.target as Node)) {
+        return;
+      }
+
+      setIsOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointerDown);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="auth-menu">
+    <div className="auth-menu" ref={menuRef}>
       <button
         type="button"
         className="account-button"
@@ -92,8 +113,8 @@ export function AuthPanel({ isLoggedIn, onLoggedOut }: AuthPanelProps) {
       )}
 
       {isLoginModalOpen && (
-        <div className="modal-backdrop" role="presentation">
-          <div className="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <div className="modal-backdrop" role="presentation" onClick={() => setIsLoginModalOpen(false)}>
+          <div className="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title" onClick={(event) => event.stopPropagation()}>
             <div className="section-heading">
               <h2 id="login-modal-title">管理者ログイン</h2>
               <button type="button" className="plain-button" onClick={() => setIsLoginModalOpen(false)}>

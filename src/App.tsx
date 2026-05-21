@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { AdminPanel } from "./components/admin/AdminPanel";
+import { GuestProgramManager } from "./components/admin/GuestProgramManager";
+import { PostHeaderManager } from "./components/admin/PostHeaderManager";
+import { RegularProgramManager } from "./components/admin/RegularProgramManager";
 import { AuthPanel } from "./components/AuthPanel";
 import { DateRangeToolbar } from "./components/DateRangeToolbar";
 import { GeneratedTextPanel } from "./components/GeneratedTextPanel";
@@ -28,6 +30,7 @@ export default function App() {
   const [message, setMessage] = useState("");
 
   const isLoggedIn = session !== null;
+  const isAdminPage = window.location.pathname === "/admin";
 
   const generatedItems = useMemo(
     () => buildGeneratedPrograms(regularPrograms, guestPrograms, startDate, endDate),
@@ -100,13 +103,16 @@ export default function App() {
     <main className="app-shell">
       <header className="page-header">
         <div>
-          <h1>テレビ出演情報</h1>
+          <h1>🌈 出演情報ジェネレーター</h1>
         </div>
-        {isLoggedIn && (
-          <a className="admin-link" href="/admin">
-            管理画面
+        <nav className="page-nav" aria-label="ページ切り替え">
+          <a className={!isAdminPage ? "active" : undefined} href="/">
+            作成
           </a>
-        )}
+          <a className={isAdminPage ? "active" : undefined} href="/admin">
+            管理
+          </a>
+        </nav>
         <AuthPanel isLoggedIn={isLoggedIn} onLoggedOut={() => setSession(null)} />
       </header>
 
@@ -119,41 +125,49 @@ export default function App() {
 
       {message && <p className="notice">{message}</p>}
 
-      <DateRangeToolbar
-        startDate={startDate}
-        endDate={endDate}
-        onStartDateChange={setStartDate}
-        onEndDateChange={setEndDate}
-      />
+      {isAdminPage ? (
+        <>
+          <h2 className="page-title">管理</h2>
+          {!isLoggedIn && <p className="notice">管理機能を使うには、右上のアイコンから管理者ログインしてください。</p>}
+          {isLoggedIn && (
+            <>
+              <PostHeaderManager items={postHeaders} onChanged={() => void loadData()} />
+              <RegularProgramManager items={regularPrograms} onChanged={() => void loadData()} />
+              <GuestProgramManager items={guestPrograms} onChanged={() => void loadData()} />
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          <h2 className="page-title">作成</h2>
+          <DateRangeToolbar
+            startDate={startDate}
+            endDate={endDate}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+          />
 
-      <PostHeaderSelect
-        postHeaders={postHeaders}
-        selectedPostHeaderId={selectedPostHeaderId}
-        onSelectedPostHeaderIdChange={setSelectedPostHeaderId}
-      />
+          <PostHeaderSelect
+            postHeaders={postHeaders}
+            selectedPostHeaderId={selectedPostHeaderId}
+            onSelectedPostHeaderIdChange={setSelectedPostHeaderId}
+          />
 
-      <PublicPrograms
-        items={generatedItems}
-        loading={loading}
-        selectedProgramIds={selectedProgramIds}
-        onSelectedProgramIdsChange={setSelectedProgramIds}
-      />
+          <PublicPrograms
+            items={generatedItems}
+            loading={loading}
+            selectedProgramIds={selectedProgramIds}
+            onSelectedProgramIdsChange={setSelectedProgramIds}
+          />
 
-      <div className="output-actions">
-        <button type="button" onClick={generateSelectedText} disabled={generatedItems.length === 0}>
-          出力
-        </button>
-      </div>
+          <div className="output-actions">
+            <button type="button" onClick={generateSelectedText} disabled={generatedItems.length === 0}>
+              出力
+            </button>
+          </div>
 
-      <GeneratedTextPanel generatedText={generatedText} onGeneratedTextChange={setGeneratedText} />
-
-      {isLoggedIn && (
-        <AdminPanel
-          guestPrograms={guestPrograms}
-          postHeaders={postHeaders}
-          regularPrograms={regularPrograms}
-          onChanged={() => void loadData()}
-        />
+          <GeneratedTextPanel generatedText={generatedText} onGeneratedTextChange={setGeneratedText} />
+        </>
       )}
     </main>
   );
