@@ -109,7 +109,7 @@ export function GuestProgramManager({ items, onChanged }: GuestProgramManagerPro
           <table className="admin-table">
             <thead>
               <tr>
-                <th className="sticky-action-column">編集</th>
+                <th className="sticky-action-column"></th>
                 <th>日付</th>
                 <th>時間</th>
                 <th>局</th>

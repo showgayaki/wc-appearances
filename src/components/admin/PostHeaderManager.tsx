@@ -96,7 +96,7 @@ export function PostHeaderManager({ items, onChanged }: PostHeaderManagerProps) 
           <table className="admin-table">
             <thead>
               <tr>
-                <th className="sticky-action-column">編集</th>
+                <th className="sticky-action-column"></th>
                 <th>見出し</th>
               </tr>
             </thead>

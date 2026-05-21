@@ -103,7 +103,10 @@ export default function App() {
     <main className="app-shell">
       <header className="page-header">
         <div>
-          <h1>🌈 出演情報ジェネレーター</h1>
+          <h1 className="app-title">
+            <span aria-hidden="true">🌈</span>
+            <span>出演情報ジェネレーター</span>
+          </h1>
         </div>
         <nav className="page-nav" aria-label="ページ切り替え">
           <a className={!isAdminPage ? "active" : undefined} href="/">
