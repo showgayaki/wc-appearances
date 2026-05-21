@@ -5,6 +5,7 @@ import type { GuestProgram, GuestProgramInput } from "../../types";
 import { getTodayYmd } from "../../utils/date";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
+import { TimeSelect } from "./TimeSelect";
 
 const emptyGuestProgram = (): GuestProgramInput => ({
   program_date: getTodayYmd(),
@@ -156,14 +157,8 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
               <input type="date" value={form.program_date} onChange={(event) => setForm({ ...form, program_date: event.target.value })} />
             </label>
             <div className="form-row">
-              <label>
-                開始
-                <input value={form.start_time} onChange={(event) => setForm({ ...form, start_time: event.target.value })} placeholder="24:45" />
-              </label>
-              <label>
-                終了
-                <input value={form.end_time} onChange={(event) => setForm({ ...form, end_time: event.target.value })} placeholder="25:15" />
-              </label>
+              <TimeSelect label="開始" value={form.start_time} onChange={(startTime) => setForm({ ...form, start_time: startTime })} />
+              <TimeSelect label="終了" value={form.end_time} onChange={(endTime) => setForm({ ...form, end_time: endTime })} />
             </div>
             <label>
               局

@@ -1,10 +1,12 @@
 import { FormEvent, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { deleteRegularProgram, saveRegularProgram } from "../../services/programs";
-import type { ProgramInput, RegularProgram, Weekday } from "../../types";
+import type { ProgramInput, RegularProgram } from "../../types";
 import { getWeekdayLabel } from "../../utils/date";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
+import { TimeSelect } from "./TimeSelect";
+import { WeekdaySelect } from "./WeekdaySelect";
 
 const emptyRegularProgram: ProgramInput = {
   weekday: 1,
@@ -13,14 +15,6 @@ const emptyRegularProgram: ProgramInput = {
   station_name: "",
   program_name: "",
   is_active: true,
-};
-
-const toWeekday = (value: string): Weekday => {
-  const weekday = Number(value);
-  if (weekday === 0 || weekday === 1 || weekday === 2 || weekday === 3 || weekday === 4 || weekday === 5 || weekday === 6) {
-    return weekday;
-  }
-  return 1;
 };
 
 const requireText = (value: string): string => value.trim();
@@ -164,25 +158,10 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       {isModalOpen && (
         <AdminEditModal title={editingId ? "レギュラー番組を編集" : "レギュラー番組を追加"} onClose={() => setIsModalOpen(false)}>
           <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
-            <label>
-              曜日
-              <select value={form.weekday} onChange={(event) => setForm({ ...form, weekday: toWeekday(event.target.value) })}>
-                {[0, 1, 2, 3, 4, 5, 6].map((weekday) => (
-                  <option key={weekday} value={weekday}>
-                    {getWeekdayLabel(weekday as Weekday)}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <WeekdaySelect value={form.weekday} onChange={(weekday) => setForm({ ...form, weekday })} />
             <div className="form-row">
-              <label>
-                開始
-                <input value={form.start_time} onChange={(event) => setForm({ ...form, start_time: event.target.value })} placeholder="26:20" />
-              </label>
-              <label>
-                終了
-                <input value={form.end_time} onChange={(event) => setForm({ ...form, end_time: event.target.value })} placeholder="26:45" />
-              </label>
+              <TimeSelect label="開始" value={form.start_time} onChange={(startTime) => setForm({ ...form, start_time: startTime })} />
+              <TimeSelect label="終了" value={form.end_time} onChange={(endTime) => setForm({ ...form, end_time: endTime })} />
             </div>
             <label>
               局

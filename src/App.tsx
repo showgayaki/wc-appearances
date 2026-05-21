@@ -109,7 +109,7 @@ export default function App() {
         <div>
           <h1 className="app-title">
             <span aria-hidden="true">🌈</span>
-            <span>出演情報ジェネレーター</span>
+            <span>出演情報メーカー</span>
           </h1>
         </div>
         <nav className="page-nav" aria-label="ページ切り替え">
