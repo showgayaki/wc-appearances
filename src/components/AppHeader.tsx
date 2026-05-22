@@ -14,8 +14,10 @@ export function AppHeader({ isAdminPage, isLoggedIn, onLoggedIn, onLoggedOut }: 
       <div className="page-header-inner">
         <div>
           <h1 className="app-title">
-            <span aria-hidden="true">🌈</span>
-            <span>出演情報メーカー</span>
+            <a href="/">
+              <span aria-hidden="true">🌈</span>
+              <span>出演情報メーカー</span>
+            </a>
           </h1>
         </div>
         <PageNav isAdminPage={isAdminPage} />
