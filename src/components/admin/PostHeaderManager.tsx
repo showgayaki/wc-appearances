@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { FiCheck } from "react-icons/fi";
 import { FiEdit } from "react-icons/fi";
 import { deletePostHeader, savePostHeader } from "../../services/programs";
 import type { PostHeader, PostHeaderInput } from "../../types";
@@ -8,6 +9,7 @@ import { FieldError } from "./FieldError";
 
 const emptyPostHeader = (): PostHeaderInput => ({
   title: "",
+  is_default: false,
 });
 
 const requireText = (value: string): string => value.trim();
@@ -26,13 +28,15 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const editingItem = editingId ? items.find((item) => item.id === editingId) : undefined;
-  const hasChanges = !editingId || !editingItem || requireText(form.title) !== editingItem.title;
+  const hasChanges =
+    !editingId || !editingItem || requireText(form.title) !== editingItem.title || form.is_default !== editingItem.is_default;
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const payload: PostHeaderInput = {
       title: requireText(form.title),
+      is_default: form.is_default,
     };
 
     if (!payload.title) {
@@ -60,6 +64,7 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
     setEditingId(item.id);
     setForm({
       title: item.title,
+      is_default: item.is_default,
     });
     setTitleError("");
     setValidationKey(0);
@@ -107,6 +112,7 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
               <tr>
                 <th className="sticky-action-column"></th>
                 <th>見出し</th>
+                <th className="default-column">デフォルト</th>
               </tr>
             </thead>
             <tbody>
@@ -118,6 +124,11 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
                     </button>
                   </td>
                   <td>{item.title}</td>
+                  <td className="status-cell default-column">
+                    {item.is_default && (
+                      <FiCheck aria-label="デフォルト" className="status-check-icon" role="img" />
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -139,6 +150,15 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
               />
               <FieldError message={titleError} visibleKey={validationKey} />
             </div>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                aria-label="デフォルトにする"
+                checked={form.is_default}
+                onChange={(event) => setForm({ ...form, is_default: event.target.checked })}
+              />
+              <span>デフォルトにする</span>
+            </label>
             <div className="button-row admin-modal-actions">
               {editingId && (
                 <button type="button" className="delete-outline-button" onClick={() => setIsConfirmModalOpen(true)}>

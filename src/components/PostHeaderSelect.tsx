@@ -21,7 +21,10 @@ const selectStyles: StylesConfig<PostHeaderOption, false> = {
 
 export function PostHeaderSelect({ postHeaders, selectedPostHeaderId, onSelectedPostHeaderIdChange }: PostHeaderSelectProps) {
   const options: PostHeaderOption[] = [
-    ...postHeaders.map((header): PostHeaderOption => ({ value: header.id, label: header.title })),
+    ...postHeaders.map((header): PostHeaderOption => ({
+      value: header.id,
+      label: header.title,
+    })),
     { value: "", label: "なし" },
   ];
   const selectedOption = options.find((option) => option.value === selectedPostHeaderId) ?? options[options.length - 1];

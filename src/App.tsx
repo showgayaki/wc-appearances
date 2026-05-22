@@ -94,7 +94,7 @@ export default function App() {
 
   useEffect(() => {
     if (!hasSelectedPostHeader && !selectedPostHeaderId && postHeaders[0]) {
-      setSelectedPostHeaderId(postHeaders[0].id);
+      setSelectedPostHeaderId(postHeaders.find((header) => header.is_default)?.id ?? postHeaders[0].id);
       return;
     }
 
