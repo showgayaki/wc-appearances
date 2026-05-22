@@ -56,7 +56,7 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
                   </td>
                   <td>{item.stationName}</td>
                   <td>{item.programName}</td>
-                  <td>{item.source === "regular" ? "レギュラー" : "ゲスト"}</td>
+                  <td>{item.source === "regular" ? "レギュラー" : "ゲスト・特番"}</td>
                 </tr>
               ))}
             </tbody>

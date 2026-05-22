@@ -1,9 +1,9 @@
-import type { GeneratedProgram, GuestProgram, RegularProgram } from "../types";
+import type { GeneratedProgram, ExtraProgram, RegularProgram } from "../types";
 import { formatDisplayDate, getDatesInRange, getWeekday, timeToMinutes } from "./date";
 
 export const buildGeneratedPrograms = (
   regularPrograms: RegularProgram[],
-  guestPrograms: GuestProgram[],
+  extraPrograms: ExtraProgram[],
   startDate: string,
   endDate: string,
 ): GeneratedProgram[] => {
@@ -22,7 +22,7 @@ export const buildGeneratedPrograms = (
       })),
   );
 
-  const guestItems = guestPrograms
+  const extraItems = extraPrograms
     .filter((program) => program.program_date >= startDate && program.program_date <= endDate)
     .map<GeneratedProgram>((program) => ({
       id: program.id,
@@ -31,10 +31,10 @@ export const buildGeneratedPrograms = (
       endTime: program.end_time,
       stationName: program.station_name,
       programName: program.program_name,
-      source: "guest",
+      source: "extra",
     }));
 
-  return [...regularItems, ...guestItems].sort((left, right) => {
+  return [...regularItems, ...extraItems].sort((left, right) => {
     if (left.date !== right.date) {
       return left.date.localeCompare(right.date);
     }

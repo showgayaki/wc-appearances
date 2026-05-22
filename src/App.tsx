@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { GuestProgramManager } from "./components/admin/GuestProgramManager";
+import { ExtraProgramManager } from "./components/admin/ExtraProgramManager";
 import { PostHeaderManager } from "./components/admin/PostHeaderManager";
 import { RegularProgramManager } from "./components/admin/RegularProgramManager";
 import { AppHeader } from "./components/AppHeader";
@@ -11,7 +11,7 @@ import { PublicPrograms } from "./components/PublicPrograms";
 import { Snackbar } from "./components/Snackbar";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import { loadProgramData } from "./services/programs";
-import type { GuestProgram, PostHeader, RegularProgram } from "./types";
+import type { ExtraProgram, PostHeader, RegularProgram } from "./types";
 import type { SnackbarKind, SnackbarMessage } from "./components/Snackbar";
 import { getDefaultEndYmd, getTodayYmd } from "./utils/date";
 import { buildGeneratedPrograms, generateProgramText } from "./utils/generateText";
@@ -19,7 +19,7 @@ import { buildGeneratedPrograms, generateProgramText } from "./utils/generateTex
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [regularPrograms, setRegularPrograms] = useState<RegularProgram[]>([]);
-  const [guestPrograms, setGuestPrograms] = useState<GuestProgram[]>([]);
+  const [extraPrograms, setExtraPrograms] = useState<ExtraProgram[]>([]);
   const [postHeaders, setPostHeaders] = useState<PostHeader[]>([]);
   const [startDate, setStartDate] = useState(getTodayYmd);
   const [endDate, setEndDate] = useState(getDefaultEndYmd);
@@ -35,8 +35,8 @@ export default function App() {
   const isAdminPage = window.location.pathname === "/admin";
 
   const generatedItems = useMemo(
-    () => buildGeneratedPrograms(regularPrograms, guestPrograms, startDate, endDate),
-    [regularPrograms, guestPrograms, startDate, endDate],
+    () => buildGeneratedPrograms(regularPrograms, extraPrograms, startDate, endDate),
+    [regularPrograms, extraPrograms, startDate, endDate],
   );
 
   const showSnackbar = useCallback((snackbarMessage: string, kind: SnackbarKind = "success") => {
@@ -54,7 +54,7 @@ export default function App() {
     try {
       const data = await loadProgramData();
       setRegularPrograms(data.regularPrograms);
-      setGuestPrograms(data.guestPrograms);
+      setExtraPrograms(data.extraPrograms);
       setPostHeaders(data.postHeaders);
     } catch {
       setMessage("データの読み込みに失敗しました。Supabase設定とRLSを確認してください。");
@@ -146,7 +146,7 @@ export default function App() {
               <>
                 <PostHeaderManager items={postHeaders} onChanged={() => void loadData()} onNotify={showSnackbar} />
                 <RegularProgramManager items={regularPrograms} onChanged={() => void loadData()} onNotify={showSnackbar} />
-                <GuestProgramManager items={guestPrograms} onChanged={() => void loadData()} onNotify={showSnackbar} />
+                <ExtraProgramManager items={extraPrograms} onChanged={() => void loadData()} onNotify={showSnackbar} />
               </>
             )}
           </>

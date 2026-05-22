@@ -12,7 +12,7 @@ export type RegularProgram = {
   updated_at: string;
 };
 
-export type GuestProgram = {
+export type ExtraProgram = {
   id: string;
   program_date: string;
   start_time: string;
@@ -40,7 +40,7 @@ export type ProgramInput = {
   is_active: boolean;
 };
 
-export type GuestProgramInput = {
+export type ExtraProgramInput = {
   program_date: string;
   start_time: string;
   end_time: string;
@@ -60,5 +60,5 @@ export type GeneratedProgram = {
   endTime: string;
   stationName: string;
   programName: string;
-  source: "regular" | "guest";
+  source: "regular" | "extra";
 };

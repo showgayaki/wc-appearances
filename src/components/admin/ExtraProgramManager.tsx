@@ -1,14 +1,14 @@
 import { FormEvent, useState } from "react";
 import { FiEdit } from "react-icons/fi";
-import { deleteGuestProgram, saveGuestProgram } from "../../services/programs";
-import type { GuestProgram, GuestProgramInput } from "../../types";
+import { deleteExtraProgram, saveExtraProgram } from "../../services/programs";
+import type { ExtraProgram, ExtraProgramInput } from "../../types";
 import { getTodayYmd } from "../../utils/date";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
 import { FieldError } from "./FieldError";
 import { TimeSelect } from "./TimeSelect";
 
-const emptyGuestProgram = (): GuestProgramInput => ({
+const emptyExtraProgram = (): ExtraProgramInput => ({
   program_date: getTodayYmd(),
   start_time: "",
   end_time: "",
@@ -18,7 +18,7 @@ const emptyGuestProgram = (): GuestProgramInput => ({
 
 const requireText = (value: string): string => value.trim();
 
-type GuestProgramErrors = {
+type ExtraProgramErrors = {
   program_date: string;
   start_time: string;
   end_time: string;
@@ -26,7 +26,7 @@ type GuestProgramErrors = {
   program_name: string;
 };
 
-const emptyGuestProgramErrors: GuestProgramErrors = {
+const emptyExtraProgramErrors: ExtraProgramErrors = {
   program_date: "",
   start_time: "",
   end_time: "",
@@ -34,16 +34,16 @@ const emptyGuestProgramErrors: GuestProgramErrors = {
   program_name: "",
 };
 
-type GuestProgramManagerProps = {
-  items: GuestProgram[];
+type ExtraProgramManagerProps = {
+  items: ExtraProgram[];
   onChanged: () => void;
   onNotify: (message: string, kind?: "success" | "error") => void;
 };
 
-export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgramManagerProps) {
+export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgramManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<GuestProgramInput>(emptyGuestProgram);
-  const [fieldErrors, setFieldErrors] = useState<GuestProgramErrors>(emptyGuestProgramErrors);
+  const [form, setForm] = useState<ExtraProgramInput>(emptyExtraProgram);
+  const [fieldErrors, setFieldErrors] = useState<ExtraProgramErrors>(emptyExtraProgramErrors);
   const [validationKey, setValidationKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -60,7 +60,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const payload: GuestProgramInput = {
+    const payload: ExtraProgramInput = {
       program_date: form.program_date,
       start_time: requireText(form.start_time),
       end_time: requireText(form.end_time),
@@ -68,7 +68,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       program_name: requireText(form.program_name),
     };
 
-    const nextFieldErrors: GuestProgramErrors = {
+    const nextFieldErrors: ExtraProgramErrors = {
       program_date: payload.program_date ? "" : "日付を入力してください。",
       start_time: payload.start_time ? "" : "開始時刻を選択してください。",
       end_time: payload.end_time ? "" : "終了時刻を選択してください。",
@@ -84,20 +84,20 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
 
     try {
       const isEditing = editingId !== null;
-      await saveGuestProgram(payload, editingId ?? undefined);
-      onNotify(isEditing ? "ゲスト出演を更新しました" : "ゲスト出演を追加しました");
+      await saveExtraProgram(payload, editingId ?? undefined);
+      onNotify(isEditing ? "ゲスト・特番を更新しました" : "ゲスト・特番を追加しました");
     } catch {
       onNotify("保存に失敗しました", "error");
       return;
     }
 
     setEditingId(null);
-    setForm(emptyGuestProgram());
+    setForm(emptyExtraProgram());
     setIsModalOpen(false);
     onChanged();
   };
 
-  const edit = (item: GuestProgram) => {
+  const edit = (item: ExtraProgram) => {
     setEditingId(item.id);
     setForm({
       program_date: item.program_date,
@@ -106,30 +106,30 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       station_name: item.station_name,
       program_name: item.program_name,
     });
-    setFieldErrors(emptyGuestProgramErrors);
+    setFieldErrors(emptyExtraProgramErrors);
     setValidationKey(0);
     setIsModalOpen(true);
   };
 
   const create = () => {
     setEditingId(null);
-    setForm(emptyGuestProgram());
-    setFieldErrors(emptyGuestProgramErrors);
+    setForm(emptyExtraProgram());
+    setFieldErrors(emptyExtraProgramErrors);
     setValidationKey(0);
     setIsModalOpen(true);
   };
 
   const remove = async (id: string) => {
     try {
-      await deleteGuestProgram(id);
-      onNotify("ゲスト出演を削除しました");
+      await deleteExtraProgram(id);
+      onNotify("ゲスト・特番を削除しました");
     } catch {
       onNotify("削除に失敗しました", "error");
       return;
     }
 
     setEditingId(null);
-    setForm(emptyGuestProgram());
+    setForm(emptyExtraProgram());
     setIsConfirmModalOpen(false);
     setIsModalOpen(false);
     onChanged();
@@ -138,7 +138,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
   return (
     <div className="manager">
       <div className="manager-heading">
-        <h3>ゲスト出演</h3>
+        <h3>ゲスト・特番</h3>
         <button type="button" onClick={create}>
           追加
         </button>
@@ -178,7 +178,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
         </div>
       )}
       {isModalOpen && (
-        <AdminEditModal title={editingId ? "ゲスト出演を編集" : "ゲスト出演を追加"} onClose={() => setIsModalOpen(false)}>
+        <AdminEditModal title={editingId ? "ゲスト・特番を編集" : "ゲスト・特番を追加"} onClose={() => setIsModalOpen(false)}>
           <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
             <div className="field-label field-with-tooltip">
               <span>日付</span>
@@ -254,8 +254,8 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       )}
       {isConfirmModalOpen && editingId && (
         <AdminConfirmModal
-          title="ゲスト出演を削除"
-          message="このゲスト出演を削除します。元に戻せません。"
+          title="ゲスト・特番を削除"
+          message="このゲスト・特番を削除します。元に戻せません。"
           confirmLabel="削除する"
           onConfirm={() => void remove(editingId)}
           onClose={() => setIsConfirmModalOpen(false)}
