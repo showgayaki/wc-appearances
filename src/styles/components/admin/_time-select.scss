@@ -1,4 +1,5 @@
 .time-select {
+  position: relative;
   display: grid;
   min-width: 0;
   margin: 0;
@@ -24,6 +25,11 @@
 .time-select-controls span {
   color: #68717d;
   font-weight: 700;
+}
+
+.time-select-field {
+  position: relative;
+  min-width: 0;
 }
 
 .time-react-select {

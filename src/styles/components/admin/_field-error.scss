@@ -1,0 +1,33 @@
+.field-with-tooltip {
+  position: relative;
+}
+
+.field-error-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 80;
+  border: 1px solid #d92d20;
+  border-radius: 6px;
+  padding: 7px 9px;
+  color: #b42318 !important;
+  background: #fff7f5;
+  box-shadow: 0 8px 20px rgba(32, 33, 36, 0.18);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.field-error-tooltip::before {
+  position: absolute;
+  top: -6px;
+  left: 12px;
+  width: 10px;
+  height: 10px;
+  border-top: 1px solid #d92d20;
+  border-left: 1px solid #d92d20;
+  background: #fff7f5;
+  content: "";
+  transform: rotate(45deg);
+}

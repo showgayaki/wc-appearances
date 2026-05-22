@@ -11,6 +11,7 @@
 @use "components/shared";
 @use "components/admin/admin-edit-modal";
 @use "components/admin/admin-confirm-modal";
+@use "components/admin/field-error";
 @use "components/admin/program-managers";
 @use "components/admin/time-select";
 @use "components/admin/weekday-select";

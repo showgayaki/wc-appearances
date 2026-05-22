@@ -5,6 +5,7 @@ import type { ProgramInput, RegularProgram } from "../../types";
 import { getWeekdayLabel } from "../../utils/date";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
+import { FieldError } from "./FieldError";
 import { TimeSelect } from "./TimeSelect";
 import { WeekdaySelect } from "./WeekdaySelect";
 
@@ -19,16 +20,31 @@ const emptyRegularProgram: ProgramInput = {
 
 const requireText = (value: string): string => value.trim();
 
+type RegularProgramErrors = {
+  start_time: string;
+  end_time: string;
+  station_name: string;
+  program_name: string;
+};
+
+const emptyRegularProgramErrors: RegularProgramErrors = {
+  start_time: "",
+  end_time: "",
+  station_name: "",
+  program_name: "",
+};
+
 type RegularProgramManagerProps = {
   items: RegularProgram[];
   onChanged: () => void;
-  onNotify: (message: string) => void;
+  onNotify: (message: string, kind?: "success" | "error") => void;
 };
 
 export function RegularProgramManager({ items, onChanged, onNotify }: RegularProgramManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ProgramInput>(emptyRegularProgram);
-  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<RegularProgramErrors>(emptyRegularProgramErrors);
+  const [validationKey, setValidationKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const editingItem = editingId ? items.find((item) => item.id === editingId) : undefined;
@@ -44,7 +60,6 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
 
     const payload: ProgramInput = {
       ...form,
@@ -54,8 +69,16 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       program_name: requireText(form.program_name),
     };
 
-    if (!payload.start_time || !payload.end_time || !payload.station_name || !payload.program_name) {
-      setError("未入力の項目があります。");
+    const nextFieldErrors: RegularProgramErrors = {
+      start_time: payload.start_time ? "" : "開始時刻を選択してください。",
+      end_time: payload.end_time ? "" : "終了時刻を選択してください。",
+      station_name: payload.station_name ? "" : "局を入力してください。",
+      program_name: payload.program_name ? "" : "番組名を入力してください。",
+    };
+    setFieldErrors(nextFieldErrors);
+
+    if (Object.values(nextFieldErrors).some((message) => message.length > 0)) {
+      setValidationKey((current) => current + 1);
       return;
     }
 
@@ -64,7 +87,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       await saveRegularProgram(payload, editingId ?? undefined);
       onNotify(isEditing ? "レギュラー番組を更新しました" : "レギュラー番組を追加しました");
     } catch {
-      setError("保存に失敗しました。");
+      onNotify("保存に失敗しました", "error");
       return;
     }
 
@@ -84,14 +107,16 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       program_name: item.program_name,
       is_active: item.is_active,
     });
-    setError("");
+    setFieldErrors(emptyRegularProgramErrors);
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
   const create = () => {
     setEditingId(null);
     setForm(emptyRegularProgram);
-    setError("");
+    setFieldErrors(emptyRegularProgramErrors);
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
@@ -100,7 +125,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       await deleteRegularProgram(id);
       onNotify("レギュラー番組を削除しました");
     } catch {
-      setError("削除に失敗しました。");
+      onNotify("削除に失敗しました", "error");
       return;
     }
 
@@ -160,16 +185,48 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
           <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
             <WeekdaySelect value={form.weekday} onChange={(weekday) => setForm({ ...form, weekday })} />
             <div className="form-row">
-              <TimeSelect label="開始" value={form.start_time} onChange={(startTime) => setForm({ ...form, start_time: startTime })} />
-              <TimeSelect label="終了" value={form.end_time} onChange={(endTime) => setForm({ ...form, end_time: endTime })} />
+              <TimeSelect
+                error={fieldErrors.start_time}
+                errorKey={validationKey}
+                label="開始"
+                value={form.start_time}
+                onChange={(startTime) => {
+                  setForm({ ...form, start_time: startTime });
+                  setFieldErrors({ ...fieldErrors, start_time: "" });
+                }}
+              />
+              <TimeSelect
+                error={fieldErrors.end_time}
+                errorKey={validationKey}
+                label="終了"
+                value={form.end_time}
+                onChange={(endTime) => {
+                  setForm({ ...form, end_time: endTime });
+                  setFieldErrors({ ...fieldErrors, end_time: "" });
+                }}
+              />
             </div>
-            <label>
+            <label className="field-with-tooltip">
               局
-              <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
+              <input
+                value={form.station_name}
+                onChange={(event) => {
+                  setForm({ ...form, station_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, station_name: "" });
+                }}
+              />
+              <FieldError message={fieldErrors.station_name} visibleKey={validationKey} />
             </label>
-            <label>
+            <label className="field-with-tooltip">
               番組名
-              <input value={form.program_name} onChange={(event) => setForm({ ...form, program_name: event.target.value })} />
+              <input
+                value={form.program_name}
+                onChange={(event) => {
+                  setForm({ ...form, program_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, program_name: "" });
+                }}
+              />
+              <FieldError message={fieldErrors.program_name} visibleKey={validationKey} />
             </label>
             <label className="checkbox-label">
               <input
@@ -189,7 +246,6 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
                 {editingId ? "更新" : "追加"}
               </button>
             </div>
-            {error && <p className="error">{error}</p>}
           </form>
         </AdminEditModal>
       )}

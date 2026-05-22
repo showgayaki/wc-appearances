@@ -5,6 +5,7 @@ import type { GuestProgram, GuestProgramInput } from "../../types";
 import { getTodayYmd } from "../../utils/date";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
+import { FieldError } from "./FieldError";
 import { TimeSelect } from "./TimeSelect";
 
 const emptyGuestProgram = (): GuestProgramInput => ({
@@ -17,16 +18,33 @@ const emptyGuestProgram = (): GuestProgramInput => ({
 
 const requireText = (value: string): string => value.trim();
 
+type GuestProgramErrors = {
+  program_date: string;
+  start_time: string;
+  end_time: string;
+  station_name: string;
+  program_name: string;
+};
+
+const emptyGuestProgramErrors: GuestProgramErrors = {
+  program_date: "",
+  start_time: "",
+  end_time: "",
+  station_name: "",
+  program_name: "",
+};
+
 type GuestProgramManagerProps = {
   items: GuestProgram[];
   onChanged: () => void;
-  onNotify: (message: string) => void;
+  onNotify: (message: string, kind?: "success" | "error") => void;
 };
 
 export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgramManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<GuestProgramInput>(emptyGuestProgram);
-  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<GuestProgramErrors>(emptyGuestProgramErrors);
+  const [validationKey, setValidationKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const editingItem = editingId ? items.find((item) => item.id === editingId) : undefined;
@@ -41,7 +59,6 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
 
     const payload: GuestProgramInput = {
       program_date: form.program_date,
@@ -51,8 +68,17 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       program_name: requireText(form.program_name),
     };
 
-    if (!payload.program_date || !payload.start_time || !payload.end_time || !payload.station_name || !payload.program_name) {
-      setError("未入力の項目があります。");
+    const nextFieldErrors: GuestProgramErrors = {
+      program_date: payload.program_date ? "" : "日付を入力してください。",
+      start_time: payload.start_time ? "" : "開始時刻を選択してください。",
+      end_time: payload.end_time ? "" : "終了時刻を選択してください。",
+      station_name: payload.station_name ? "" : "局を入力してください。",
+      program_name: payload.program_name ? "" : "番組名を入力してください。",
+    };
+    setFieldErrors(nextFieldErrors);
+
+    if (Object.values(nextFieldErrors).some((message) => message.length > 0)) {
+      setValidationKey((current) => current + 1);
       return;
     }
 
@@ -61,7 +87,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       await saveGuestProgram(payload, editingId ?? undefined);
       onNotify(isEditing ? "ゲスト出演を更新しました" : "ゲスト出演を追加しました");
     } catch {
-      setError("保存に失敗しました。");
+      onNotify("保存に失敗しました", "error");
       return;
     }
 
@@ -80,14 +106,16 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       station_name: item.station_name,
       program_name: item.program_name,
     });
-    setError("");
+    setFieldErrors(emptyGuestProgramErrors);
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
   const create = () => {
     setEditingId(null);
     setForm(emptyGuestProgram());
-    setError("");
+    setFieldErrors(emptyGuestProgramErrors);
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
@@ -96,7 +124,7 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       await deleteGuestProgram(id);
       onNotify("ゲスト出演を削除しました");
     } catch {
-      setError("削除に失敗しました。");
+      onNotify("削除に失敗しました", "error");
       return;
     }
 
@@ -152,21 +180,61 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
       {isModalOpen && (
         <AdminEditModal title={editingId ? "ゲスト出演を編集" : "ゲスト出演を追加"} onClose={() => setIsModalOpen(false)}>
           <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
-            <label>
+            <label className="field-with-tooltip">
               日付
-              <input type="date" value={form.program_date} onChange={(event) => setForm({ ...form, program_date: event.target.value })} />
+              <input
+                type="date"
+                value={form.program_date}
+                onChange={(event) => {
+                  setForm({ ...form, program_date: event.target.value });
+                  setFieldErrors({ ...fieldErrors, program_date: "" });
+                }}
+              />
+              <FieldError message={fieldErrors.program_date} visibleKey={validationKey} />
             </label>
             <div className="form-row">
-              <TimeSelect label="開始" value={form.start_time} onChange={(startTime) => setForm({ ...form, start_time: startTime })} />
-              <TimeSelect label="終了" value={form.end_time} onChange={(endTime) => setForm({ ...form, end_time: endTime })} />
+              <TimeSelect
+                error={fieldErrors.start_time}
+                errorKey={validationKey}
+                label="開始"
+                value={form.start_time}
+                onChange={(startTime) => {
+                  setForm({ ...form, start_time: startTime });
+                  setFieldErrors({ ...fieldErrors, start_time: "" });
+                }}
+              />
+              <TimeSelect
+                error={fieldErrors.end_time}
+                errorKey={validationKey}
+                label="終了"
+                value={form.end_time}
+                onChange={(endTime) => {
+                  setForm({ ...form, end_time: endTime });
+                  setFieldErrors({ ...fieldErrors, end_time: "" });
+                }}
+              />
             </div>
-            <label>
+            <label className="field-with-tooltip">
               局
-              <input value={form.station_name} onChange={(event) => setForm({ ...form, station_name: event.target.value })} />
+              <input
+                value={form.station_name}
+                onChange={(event) => {
+                  setForm({ ...form, station_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, station_name: "" });
+                }}
+              />
+              <FieldError message={fieldErrors.station_name} visibleKey={validationKey} />
             </label>
-            <label>
+            <label className="field-with-tooltip">
               番組名
-              <input value={form.program_name} onChange={(event) => setForm({ ...form, program_name: event.target.value })} />
+              <input
+                value={form.program_name}
+                onChange={(event) => {
+                  setForm({ ...form, program_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, program_name: "" });
+                }}
+              />
+              <FieldError message={fieldErrors.program_name} visibleKey={validationKey} />
             </label>
             <div className="button-row admin-modal-actions">
               {editingId && (
@@ -178,7 +246,6 @@ export function GuestProgramManager({ items, onChanged, onNotify }: GuestProgram
                 {editingId ? "更新" : "追加"}
               </button>
             </div>
-            {error && <p className="error">{error}</p>}
           </form>
         </AdminEditModal>
       )}

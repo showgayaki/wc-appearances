@@ -4,6 +4,7 @@ import { deletePostHeader, savePostHeader } from "../../services/programs";
 import type { PostHeader, PostHeaderInput } from "../../types";
 import { AdminConfirmModal } from "./AdminConfirmModal";
 import { AdminEditModal } from "./AdminEditModal";
+import { FieldError } from "./FieldError";
 
 const emptyPostHeader = (): PostHeaderInput => ({
   title: "",
@@ -14,13 +15,14 @@ const requireText = (value: string): string => value.trim();
 type PostHeaderManagerProps = {
   items: PostHeader[];
   onChanged: () => void;
-  onNotify: (message: string) => void;
+  onNotify: (message: string, kind?: "success" | "error") => void;
 };
 
 export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<PostHeaderInput>(emptyPostHeader);
-  const [error, setError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [validationKey, setValidationKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const editingItem = editingId ? items.find((item) => item.id === editingId) : undefined;
@@ -28,14 +30,14 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
 
     const payload: PostHeaderInput = {
       title: requireText(form.title),
     };
 
     if (!payload.title) {
-      setError("未入力の項目があります。");
+      setTitleError("見出しを入力してください。");
+      setValidationKey((current) => current + 1);
       return;
     }
 
@@ -44,7 +46,7 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
       await savePostHeader(payload, editingId ?? undefined);
       onNotify(isEditing ? "投稿見出しを更新しました" : "投稿見出しを追加しました");
     } catch {
-      setError("保存に失敗しました。");
+      onNotify("保存に失敗しました", "error");
       return;
     }
 
@@ -59,14 +61,16 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
     setForm({
       title: item.title,
     });
-    setError("");
+    setTitleError("");
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
   const create = () => {
     setEditingId(null);
     setForm(emptyPostHeader());
-    setError("");
+    setTitleError("");
+    setValidationKey(0);
     setIsModalOpen(true);
   };
 
@@ -75,7 +79,7 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
       await deletePostHeader(id);
       onNotify("投稿見出しを削除しました");
     } catch {
-      setError("削除に失敗しました。");
+      onNotify("削除に失敗しました", "error");
       return;
     }
 
@@ -123,9 +127,16 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
       {isModalOpen && (
         <AdminEditModal title={editingId ? "投稿見出しを編集" : "投稿見出しを追加"} onClose={() => setIsModalOpen(false)}>
           <form className="admin-modal-form" onSubmit={(event) => void submit(event)}>
-            <label>
+            <label className="field-with-tooltip">
               見出し
-              <input value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+              <input
+                value={form.title}
+                onChange={(event) => {
+                  setForm({ ...form, title: event.target.value });
+                  setTitleError("");
+                }}
+              />
+              <FieldError message={titleError} visibleKey={validationKey} />
             </label>
             <div className="button-row admin-modal-actions">
               {editingId && (
@@ -137,7 +148,6 @@ export function PostHeaderManager({ items, onChanged, onNotify }: PostHeaderMana
                 {editingId ? "更新" : "追加"}
               </button>
             </div>
-            {error && <p className="error">{error}</p>}
           </form>
         </AdminEditModal>
       )}
