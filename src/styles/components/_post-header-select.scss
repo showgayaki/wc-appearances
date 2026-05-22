@@ -1,0 +1,13 @@
+.header-select-panel {
+  border: 1px solid #d9dfe7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #ffffff;
+}
+
+@media (max-width: 560px) {
+  .header-select-panel {
+    padding: 10px;
+  }
+}

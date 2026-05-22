@@ -1,0 +1,36 @@
+.toolbar {
+  border: 1px solid #d9dfe7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #ffffff;
+}
+
+.date-range-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+  align-items: end;
+  gap: 8px;
+}
+
+.date-range-row label {
+  min-width: 0;
+}
+
+.date-range-row input[type="date"] {
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range-separator {
+  padding-bottom: 9px;
+  color: #68717d;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .toolbar {
+    padding: 10px;
+  }
+}

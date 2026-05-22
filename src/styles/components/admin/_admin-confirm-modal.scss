@@ -1,0 +1,41 @@
+.confirm-modal {
+  width: min(380px, 100%);
+}
+
+.confirm-message {
+  margin-bottom: 16px;
+  color: #4d5560;
+  line-height: 1.6;
+}
+
+.danger-button,
+button.danger-button[type="button"] {
+  border-color: #b42318;
+  color: #ffffff;
+  background: #b42318;
+}
+
+.danger-button:hover,
+button.danger-button[type="button"]:hover {
+  border-color: #96180f;
+  background: #96180f;
+}
+
+.delete-outline-button,
+button.delete-outline-button[type="button"] {
+  border-color: #b42318;
+  color: #b42318;
+  background: #ffffff;
+}
+
+.delete-outline-button:hover,
+button.delete-outline-button[type="button"]:hover {
+  color: #96180f;
+  border-color: #96180f;
+  background: #fff4f2;
+}
+
+.confirm-actions {
+  justify-content: space-between;
+  gap: 14px;
+}

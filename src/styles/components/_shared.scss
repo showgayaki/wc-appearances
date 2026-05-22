@@ -1,0 +1,52 @@
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.status {
+  margin: 8px 0 0;
+  color: #17633a;
+  font-weight: 700;
+}
+
+.error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.empty {
+  margin: 0;
+  color: #6b7280;
+}
+
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.plain-button {
+  min-height: 34px;
+  border-color: transparent;
+  padding: 0 4px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button-row.compact {
+  flex-wrap: nowrap;
+}
+
+.button-row.compact button {
+  min-height: 34px;
+  padding: 0 10px;
+}

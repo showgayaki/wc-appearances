@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { GuestProgramManager } from "./components/admin/GuestProgramManager";
 import { PostHeaderManager } from "./components/admin/PostHeaderManager";
 import { RegularProgramManager } from "./components/admin/RegularProgramManager";
-import { AuthPanel } from "./components/AuthPanel";
+import { AppHeader } from "./components/AppHeader";
 import { DateRangeToolbar } from "./components/DateRangeToolbar";
 import { GeneratedTextPanel } from "./components/GeneratedTextPanel";
 import { PostHeaderSelect } from "./components/PostHeaderSelect";
@@ -105,30 +105,15 @@ export default function App() {
 
   return (
     <main className="app-shell">
-      <header className="page-header">
-        <div>
-          <h1 className="app-title">
-            <span aria-hidden="true">🌈</span>
-            <span>出演情報メーカー</span>
-          </h1>
-        </div>
-        <nav className="page-nav" aria-label="ページ切り替え">
-          <a className={!isAdminPage ? "active" : undefined} href="/">
-            作成
-          </a>
-          <a className={isAdminPage ? "active" : undefined} href="/admin">
-            管理
-          </a>
-        </nav>
-        <AuthPanel
-          isLoggedIn={isLoggedIn}
-          onLoggedIn={() => showSnackbar("ログインしました")}
-          onLoggedOut={() => {
-            setSession(null);
-            showSnackbar("ログアウトしました");
-          }}
-        />
-      </header>
+      <AppHeader
+        isAdminPage={isAdminPage}
+        isLoggedIn={isLoggedIn}
+        onLoggedIn={() => showSnackbar("ログインしました")}
+        onLoggedOut={() => {
+          setSession(null);
+          showSnackbar("ログアウトしました");
+        }}
+      />
 
       {snackbar && <Snackbar key={snackbar.id} snackbar={snackbar} onClose={() => setSnackbar(null)} />}
 

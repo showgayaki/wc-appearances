@@ -1,0 +1,22 @@
+.list-panel {
+  border: 1px solid #d9dfe7;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+.check-column {
+  width: 48px;
+  text-align: center;
+}
+
+.check-column input {
+  width: auto;
+}
+
+@media (max-width: 560px) {
+  .list-panel {
+    padding: 12px;
+  }
+}

@@ -1,0 +1,118 @@
+:root {
+  color: #202124;
+  background: #f6f7f9;
+  font-size: 15px;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border: 1px solid #1b4d89;
+  border-radius: 6px;
+  padding: 0 14px;
+  color: #ffffff;
+  background: #1b4d89;
+  cursor: pointer;
+}
+
+button:disabled {
+  border-color: #c2c8d0;
+  color: #6f7782;
+  background: #e6e9ed;
+  cursor: not-allowed;
+}
+
+button[type="button"] {
+  color: #1b4d89;
+  background: #ffffff;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #ccd3dc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #202124;
+  background: #ffffff;
+}
+
+textarea {
+  min-height: 180px;
+  overflow: hidden;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+label {
+  display: grid;
+  gap: 5px;
+  color: #4d5560;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e2e6eb;
+  padding: 9px 8px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+th {
+  color: #5d6672;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #f8f9fb;
+}
+
+@media (max-width: 560px) {
+  :root {
+    font-size: 14px;
+  }
+
+  table {
+    min-width: 560px;
+  }
+
+  th,
+  td {
+    padding: 8px 7px;
+  }
+}

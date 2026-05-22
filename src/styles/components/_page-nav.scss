@@ -1,0 +1,40 @@
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.page-nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 2px;
+  color: #1b4d89;
+  font-size: 1rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.page-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #1b4d89;
+  border-radius: 999px;
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.7);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.page-nav a.active::after,
+.page-nav a:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}

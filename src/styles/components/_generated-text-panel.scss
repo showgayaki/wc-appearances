@@ -1,0 +1,13 @@
+.text-panel {
+  border: 1px solid #d9dfe7;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+@media (max-width: 560px) {
+  .text-panel {
+    padding: 12px;
+  }
+}
