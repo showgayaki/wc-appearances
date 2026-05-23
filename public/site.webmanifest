@@ -1,6 +1,6 @@
 {
-  "name": "出演情報メーカー",
-  "short_name": "出演情報",
+  "name": "出演告知ジェネレーター",
+  "short_name": "出演告知",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

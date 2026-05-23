@@ -1,3 +1,4 @@
+import { APP_TITLE } from "../constants/app";
 import { AuthPanel } from "./AuthPanel";
 import { PageNav } from "./PageNav";
 
@@ -15,8 +16,8 @@ export function AppHeader({ isAdminPage, isLoggedIn, onLoggedIn, onLoggedOut }: 
         <div>
           <h1 className="app-title">
             <a href="/">
-              <span aria-hidden="true">🌈</span>
-              <span>出演情報メーカー</span>
+              <img className="app-title-icon" src="/favicon.svg" alt="" aria-hidden="true" />
+              <span>{APP_TITLE}</span>
             </a>
           </h1>
         </div>

@@ -1,4 +1,4 @@
-# wc-appearances
+# appearance-notice-generator
 
 このプロジェクトは、テレビ出演情報を公開表示し、投稿用テキストを生成するための軽量Webアプリです。
 
