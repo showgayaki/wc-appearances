@@ -18,6 +18,7 @@ export const buildGeneratedPrograms = (
         endTime: program.end_time,
         stationName: program.station_name,
         programName: program.program_name,
+        titleSuffix: null,
         source: "regular",
       })),
   );
@@ -31,6 +32,7 @@ export const buildGeneratedPrograms = (
       endTime: program.end_time,
       stationName: program.station_name,
       programName: program.program_name,
+      titleSuffix: program.title_suffix,
       source: "extra",
     }));
 
@@ -38,14 +40,20 @@ export const buildGeneratedPrograms = (
     if (left.date !== right.date) {
       return left.date.localeCompare(right.date);
     }
-    return timeToMinutes(left.startTime) - timeToMinutes(right.startTime);
+    return timeToMinutes(left.startTime ?? "00:00") - timeToMinutes(right.startTime ?? "00:00");
   });
+};
+
+const formatProgramTitle = (item: GeneratedProgram): string => {
+  const suffix = item.titleSuffix?.trim();
+  return suffix ? `${item.stationName}「${item.programName}」（${suffix}）` : `${item.stationName}「${item.programName}」`;
 };
 
 export const generateProgramText = (title: string, items: GeneratedProgram[]): string => {
   const blocks = items.map((item) => {
     const date = formatDisplayDate(item.date);
-    return `${date}${item.startTime}〜${item.endTime}\n${item.stationName}「${item.programName}」`;
+    const dateLine = item.startTime && item.endTime ? `${date}${item.startTime}〜${item.endTime}` : date;
+    return `${dateLine}\n${formatProgramTitle(item)}`;
   });
 
   const titleBlock = title.trim();

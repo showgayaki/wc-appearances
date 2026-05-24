@@ -8,6 +8,7 @@ type TimeSelectProps = {
   onChange: (value: string) => void;
   error?: string;
   errorKey?: number;
+  allowEmpty?: boolean;
 };
 
 type TimeOption = {
@@ -17,6 +18,7 @@ type TimeOption = {
 
 const hours = Array.from({ length: 30 }, (_, index) => String(index).padStart(2, "0"));
 const minutes = Array.from({ length: 60 }, (_, index) => String(index).padStart(2, "0"));
+const noTimeOption: TimeOption = { value: "", label: "なし" };
 const hourOptions = hours.map((hour): TimeOption => ({ value: hour, label: hour }));
 const minuteOptions = minutes.map((minute): TimeOption => ({ value: minute, label: minute }));
 
@@ -44,11 +46,12 @@ const splitTime = (value: string): { hour: string; minute: string } => {
   return { hour, minute };
 };
 
-export function TimeSelect({ label, value, onChange, error = "", errorKey = 0 }: TimeSelectProps) {
+export function TimeSelect({ label, value, onChange, error = "", errorKey = 0, allowEmpty = false }: TimeSelectProps) {
   const { hour, minute } = splitTime(value);
   const [draftHour, setDraftHour] = useState(hour);
   const [draftMinute, setDraftMinute] = useState(minute);
-  const selectedHour = hourOptions.find((option) => option.value === draftHour) ?? null;
+  const selectableHourOptions = allowEmpty ? [noTimeOption, ...hourOptions] : hourOptions;
+  const selectedHour = allowEmpty && !draftHour && !draftMinute ? noTimeOption : hourOptions.find((option) => option.value === draftHour) ?? null;
   const selectedMinute = minuteOptions.find((option) => option.value === draftMinute) ?? null;
   const portalTarget = typeof document === "undefined" ? undefined : document.body;
   const hourError = error && !draftHour ? "時を選択してください。" : "";
@@ -69,6 +72,11 @@ export function TimeSelect({ label, value, onChange, error = "", errorKey = 0 }:
     setDraftHour(nextHour);
     setDraftMinute(nextMinute);
 
+    if (!nextHour && !nextMinute && allowEmpty) {
+      onChange("");
+      return;
+    }
+
     if (!nextHour || !nextMinute) {
       return;
     }
@@ -77,7 +85,8 @@ export function TimeSelect({ label, value, onChange, error = "", errorKey = 0 }:
   };
 
   const updateHour = (option: SingleValue<TimeOption>) => {
-    update(option?.value ?? "", draftMinute);
+    const nextHour = option?.value ?? "";
+    update(nextHour, allowEmpty && !nextHour ? "" : draftMinute);
   };
 
   const updateMinute = (option: SingleValue<TimeOption>) => {
@@ -101,7 +110,7 @@ export function TimeSelect({ label, value, onChange, error = "", errorKey = 0 }:
             menuPosition="fixed"
             noOptionsMessage={() => "候補がありません"}
             onChange={updateHour}
-            options={hourOptions}
+            options={selectableHourOptions}
             placeholder="時"
             styles={selectStyles}
             value={selectedHour}
@@ -117,6 +126,7 @@ export function TimeSelect({ label, value, onChange, error = "", errorKey = 0 }:
             classNamePrefix="time-react-select"
             blurInputOnSelect
             isSearchable={false}
+            isDisabled={allowEmpty && !draftHour}
             menuPlacement="auto"
             menuPortalTarget={portalTarget}
             menuPosition="fixed"

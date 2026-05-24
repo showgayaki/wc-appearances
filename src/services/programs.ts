@@ -24,7 +24,12 @@ const throwIfNoChangedRow = (error: { message: string } | null, data: { id: stri
 export const loadProgramData = async (): Promise<ProgramData> => {
   const [regularResult, extraResult, headerResult] = await Promise.all([
     supabase.from("regular_programs").select("*").order("weekday").order("start_time").overrideTypes<RegularProgram[], { merge: false }>(),
-    supabase.from("extra_programs").select("*").order("program_date").order("start_time").overrideTypes<ExtraProgram[], { merge: false }>(),
+    supabase
+      .from("extra_programs")
+      .select("*")
+      .order("program_date")
+      .order("start_time", { nullsFirst: true })
+      .overrideTypes<ExtraProgram[], { merge: false }>(),
     supabase.from("post_headers").select("*").order("created_at").overrideTypes<PostHeader[], { merge: false }>(),
   ]);
 

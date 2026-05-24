@@ -10,13 +10,24 @@ import { TimeSelect } from "./TimeSelect";
 
 const emptyExtraProgram = (): ExtraProgramInput => ({
   program_date: getTodayYmd(),
-  start_time: "",
-  end_time: "",
+  start_time: null,
+  end_time: null,
   station_name: "",
   program_name: "",
+  title_suffix: null,
 });
 
 const requireText = (value: string): string => value.trim();
+const optionalText = (value: string | null): string | null => {
+  const trimmed = value?.trim() ?? "";
+  return trimmed.length > 0 ? trimmed : null;
+};
+const formatTime = (startTime: string | null, endTime: string | null): string =>
+  startTime && endTime ? `${startTime}〜${endTime}` : "なし";
+const formatProgramName = (programName: string, titleSuffix: string | null): string => {
+  const suffix = titleSuffix?.trim();
+  return suffix ? `${programName}（${suffix}）` : programName;
+};
 
 type ExtraProgramErrors = {
   program_date: string;
@@ -24,6 +35,7 @@ type ExtraProgramErrors = {
   end_time: string;
   station_name: string;
   program_name: string;
+  title_suffix: string;
 };
 
 const emptyExtraProgramErrors: ExtraProgramErrors = {
@@ -32,6 +44,7 @@ const emptyExtraProgramErrors: ExtraProgramErrors = {
   end_time: "",
   station_name: "",
   program_name: "",
+  title_suffix: "",
 };
 
 type ExtraProgramManagerProps = {
@@ -52,28 +65,31 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
     !editingId ||
     !editingItem ||
     form.program_date !== editingItem.program_date ||
-    requireText(form.start_time) !== editingItem.start_time ||
-    requireText(form.end_time) !== editingItem.end_time ||
+    optionalText(form.start_time) !== editingItem.start_time ||
+    optionalText(form.end_time) !== editingItem.end_time ||
     requireText(form.station_name) !== editingItem.station_name ||
-    requireText(form.program_name) !== editingItem.program_name;
+    requireText(form.program_name) !== editingItem.program_name ||
+    optionalText(form.title_suffix) !== editingItem.title_suffix;
 
   const submit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     const payload: ExtraProgramInput = {
       program_date: form.program_date,
-      start_time: requireText(form.start_time),
-      end_time: requireText(form.end_time),
+      start_time: optionalText(form.start_time),
+      end_time: optionalText(form.end_time),
       station_name: requireText(form.station_name),
       program_name: requireText(form.program_name),
+      title_suffix: optionalText(form.title_suffix),
     };
 
     const nextFieldErrors: ExtraProgramErrors = {
       program_date: payload.program_date ? "" : "日付を入力してください。",
-      start_time: payload.start_time ? "" : "開始時刻を選択してください。",
-      end_time: payload.end_time ? "" : "終了時刻を選択してください。",
+      start_time: !payload.start_time && payload.end_time ? "開始時刻を選択してください。" : "",
+      end_time: payload.start_time && !payload.end_time ? "終了時刻を選択してください。" : "",
       station_name: payload.station_name ? "" : "局を入力してください。",
       program_name: payload.program_name ? "" : "番組名を入力してください。",
+      title_suffix: "",
     };
     setFieldErrors(nextFieldErrors);
 
@@ -105,6 +121,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
       end_time: item.end_time,
       station_name: item.station_name,
       program_name: item.program_name,
+      title_suffix: item.title_suffix,
     });
     setFieldErrors(emptyExtraProgramErrors);
     setValidationKey(0);
@@ -167,10 +184,10 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                   </td>
                   <td>{item.program_date}</td>
                   <td>
-                    {item.start_time}〜{item.end_time}
+                    {formatTime(item.start_time, item.end_time)}
                   </td>
                   <td>{item.station_name}</td>
-                  <td>{item.program_name}</td>
+                  <td>{formatProgramName(item.program_name, item.title_suffix)}</td>
                 </tr>
               ))}
             </tbody>
@@ -198,9 +215,10 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                 error={fieldErrors.start_time}
                 errorKey={validationKey}
                 label="開始"
-                value={form.start_time}
+                value={form.start_time ?? ""}
+                allowEmpty
                 onChange={(startTime) => {
-                  setForm({ ...form, start_time: startTime });
+                  setForm({ ...form, start_time: optionalText(startTime) });
                   setFieldErrors({ ...fieldErrors, start_time: "" });
                 }}
               />
@@ -208,9 +226,10 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                 error={fieldErrors.end_time}
                 errorKey={validationKey}
                 label="終了"
-                value={form.end_time}
+                value={form.end_time ?? ""}
+                allowEmpty
                 onChange={(endTime) => {
-                  setForm({ ...form, end_time: endTime });
+                  setForm({ ...form, end_time: optionalText(endTime) });
                   setFieldErrors({ ...fieldErrors, end_time: "" });
                 }}
               />
@@ -238,6 +257,24 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                 }}
               />
               <FieldError message={fieldErrors.program_name} visibleKey={validationKey} />
+            </div>
+            <div className="field-label field-with-tooltip">
+              <span className="field-label-row">
+                <span>番組名後ろ注記</span>
+                <span className="field-hint" id="title-suffix-hint">
+                  番組名の後ろにカッコ付きで出力されます
+                </span>
+              </span>
+              <input
+                aria-describedby="title-suffix-hint"
+                aria-label="番組名後ろ注記"
+                placeholder="例: 再放送"
+                value={form.title_suffix ?? ""}
+                onChange={(event) => {
+                  setForm({ ...form, title_suffix: optionalText(event.target.value) });
+                }}
+              />
+              <FieldError message={fieldErrors.title_suffix} visibleKey={validationKey} />
             </div>
             <div className="button-row admin-modal-actions">
               {editingId && (

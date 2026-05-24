@@ -7,6 +7,12 @@ type PublicProgramsProps = {
   onSelectedProgramIdsChange: (ids: Set<string>) => void;
 };
 
+const formatTime = (item: GeneratedProgram): string => (item.startTime && item.endTime ? `${item.startTime}〜${item.endTime}` : "時間なし");
+const formatProgramName = (item: GeneratedProgram): string => {
+  const suffix = item.titleSuffix?.trim();
+  return suffix ? `${item.programName}（${suffix}）` : item.programName;
+};
+
 export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedProgramIdsChange }: PublicProgramsProps) {
   const toggleItem = (id: string) => {
     const nextIds = new Set(selectedProgramIds);
@@ -51,11 +57,9 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
                     />
                   </td>
                   <td>{item.date}</td>
-                  <td>
-                    {item.startTime}〜{item.endTime}
-                  </td>
+                  <td>{formatTime(item)}</td>
                   <td>{item.stationName}</td>
-                  <td>{item.programName}</td>
+                  <td>{formatProgramName(item)}</td>
                   <td>{item.source === "regular" ? "レギュラー" : "ゲスト・特番"}</td>
                 </tr>
               ))}
