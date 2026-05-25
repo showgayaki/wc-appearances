@@ -16,7 +16,7 @@ export const buildGeneratedPrograms = (
         date,
         startTime: program.start_time,
         endTime: program.end_time,
-        stationName: program.station_name,
+        mediaName: program.media_name,
         programName: program.program_name,
         titleSuffix: null,
         source: "regular",
@@ -30,7 +30,7 @@ export const buildGeneratedPrograms = (
       date: program.program_date,
       startTime: program.start_time,
       endTime: program.end_time,
-      stationName: program.station_name,
+      mediaName: program.media_name,
       programName: program.program_name,
       titleSuffix: program.title_suffix,
       source: "extra",
@@ -46,7 +46,7 @@ export const buildGeneratedPrograms = (
 
 const formatProgramTitle = (item: GeneratedProgram): string => {
   const suffix = item.titleSuffix?.trim();
-  return suffix ? `${item.stationName}「${item.programName}」（${suffix}）` : `${item.stationName}「${item.programName}」`;
+  return suffix ? `${item.mediaName}「${item.programName}」（${suffix}）` : `${item.mediaName}「${item.programName}」`;
 };
 
 export const generateProgramText = (title: string, items: GeneratedProgram[]): string => {

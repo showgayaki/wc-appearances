@@ -5,7 +5,7 @@ export type RegularProgram = {
   weekday: Weekday;
   start_time: string;
   end_time: string;
-  station_name: string;
+  media_name: string;
   program_name: string;
   is_active: boolean;
   created_at: string;
@@ -17,7 +17,7 @@ export type ExtraProgram = {
   program_date: string;
   start_time: string | null;
   end_time: string | null;
-  station_name: string;
+  media_name: string;
   program_name: string;
   title_suffix: string | null;
   created_at: string;
@@ -36,7 +36,7 @@ export type ProgramInput = {
   weekday: Weekday;
   start_time: string;
   end_time: string;
-  station_name: string;
+  media_name: string;
   program_name: string;
   is_active: boolean;
 };
@@ -45,7 +45,7 @@ export type ExtraProgramInput = {
   program_date: string;
   start_time: string | null;
   end_time: string | null;
-  station_name: string;
+  media_name: string;
   program_name: string;
   title_suffix: string | null;
 };
@@ -60,7 +60,7 @@ export type GeneratedProgram = {
   date: string;
   startTime: string | null;
   endTime: string | null;
-  stationName: string;
+  mediaName: string;
   programName: string;
   titleSuffix: string | null;
   source: "regular" | "extra";

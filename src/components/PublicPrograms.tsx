@@ -44,7 +44,7 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
                 <th>日付</th>
                 <th>時間</th>
                 <th>番組名</th>
-                <th>局</th>
+                <th>媒体</th>
               </tr>
             </thead>
             <tbody>
@@ -64,7 +64,7 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
                   <td>{formatDisplayDate(item.date)}</td>
                   <td>{formatTime(item)}</td>
                   <td>{formatProgramName(item)}</td>
-                  <td>{item.stationName}</td>
+                  <td>{item.mediaName}</td>
                 </tr>
               ))}
             </tbody>

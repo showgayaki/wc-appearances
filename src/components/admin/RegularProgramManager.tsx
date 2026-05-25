@@ -13,7 +13,7 @@ const emptyRegularProgram: ProgramInput = {
   weekday: 1,
   start_time: "",
   end_time: "",
-  station_name: "",
+  media_name: "",
   program_name: "",
   is_active: true,
 };
@@ -23,14 +23,14 @@ const requireText = (value: string): string => value.trim();
 type RegularProgramErrors = {
   start_time: string;
   end_time: string;
-  station_name: string;
+  media_name: string;
   program_name: string;
 };
 
 const emptyRegularProgramErrors: RegularProgramErrors = {
   start_time: "",
   end_time: "",
-  station_name: "",
+  media_name: "",
   program_name: "",
 };
 
@@ -54,7 +54,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
     form.weekday !== editingItem.weekday ||
     requireText(form.start_time) !== editingItem.start_time ||
     requireText(form.end_time) !== editingItem.end_time ||
-    requireText(form.station_name) !== editingItem.station_name ||
+    requireText(form.media_name) !== editingItem.media_name ||
     requireText(form.program_name) !== editingItem.program_name ||
     form.is_active !== editingItem.is_active;
 
@@ -65,14 +65,14 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       ...form,
       start_time: requireText(form.start_time),
       end_time: requireText(form.end_time),
-      station_name: requireText(form.station_name),
+      media_name: requireText(form.media_name),
       program_name: requireText(form.program_name),
     };
 
     const nextFieldErrors: RegularProgramErrors = {
       start_time: payload.start_time ? "" : "開始時刻を選択してください。",
       end_time: payload.end_time ? "" : "終了時刻を選択してください。",
-      station_name: payload.station_name ? "" : "局を入力してください。",
+      media_name: payload.media_name ? "" : "媒体を入力してください。",
       program_name: payload.program_name ? "" : "番組名を入力してください。",
     };
     setFieldErrors(nextFieldErrors);
@@ -103,7 +103,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
       weekday: item.weekday,
       start_time: item.start_time,
       end_time: item.end_time,
-      station_name: item.station_name,
+      media_name: item.media_name,
       program_name: item.program_name,
       is_active: item.is_active,
     });
@@ -154,7 +154,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
                 <th className="sticky-action-column"></th>
                 <th className="weekday-column">曜日</th>
                 <th>時間</th>
-                <th>局</th>
+                <th>媒体</th>
                 <th>番組名</th>
                 <th>状態</th>
               </tr>
@@ -171,7 +171,7 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
                   <td>
                     {item.start_time}〜{item.end_time}
                   </td>
-                  <td>{item.station_name}</td>
+                  <td>{item.media_name}</td>
                   <td>{item.program_name}</td>
                   <td>{item.is_active ? "有効" : "無効"}</td>
                 </tr>
@@ -207,16 +207,16 @@ export function RegularProgramManager({ items, onChanged, onNotify }: RegularPro
               />
             </div>
             <div className="field-label field-with-tooltip">
-              <span>局</span>
+              <span>媒体</span>
               <input
-                aria-label="局"
-                value={form.station_name}
+                aria-label="媒体"
+                value={form.media_name}
                 onChange={(event) => {
-                  setForm({ ...form, station_name: event.target.value });
-                  setFieldErrors({ ...fieldErrors, station_name: "" });
+                  setForm({ ...form, media_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, media_name: "" });
                 }}
               />
-              <FieldError message={fieldErrors.station_name} visibleKey={validationKey} />
+              <FieldError message={fieldErrors.media_name} visibleKey={validationKey} />
             </div>
             <div className="field-label field-with-tooltip">
               <span>番組名</span>

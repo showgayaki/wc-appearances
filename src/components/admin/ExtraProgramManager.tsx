@@ -12,7 +12,7 @@ const emptyExtraProgram = (): ExtraProgramInput => ({
   program_date: getTodayYmd(),
   start_time: null,
   end_time: null,
-  station_name: "",
+  media_name: "",
   program_name: "",
   title_suffix: null,
 });
@@ -33,7 +33,7 @@ type ExtraProgramErrors = {
   program_date: string;
   start_time: string;
   end_time: string;
-  station_name: string;
+  media_name: string;
   program_name: string;
   title_suffix: string;
 };
@@ -42,7 +42,7 @@ const emptyExtraProgramErrors: ExtraProgramErrors = {
   program_date: "",
   start_time: "",
   end_time: "",
-  station_name: "",
+  media_name: "",
   program_name: "",
   title_suffix: "",
 };
@@ -67,7 +67,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
     form.program_date !== editingItem.program_date ||
     optionalText(form.start_time) !== editingItem.start_time ||
     optionalText(form.end_time) !== editingItem.end_time ||
-    requireText(form.station_name) !== editingItem.station_name ||
+    requireText(form.media_name) !== editingItem.media_name ||
     requireText(form.program_name) !== editingItem.program_name ||
     optionalText(form.title_suffix) !== editingItem.title_suffix;
 
@@ -78,7 +78,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
       program_date: form.program_date,
       start_time: optionalText(form.start_time),
       end_time: optionalText(form.end_time),
-      station_name: requireText(form.station_name),
+      media_name: requireText(form.media_name),
       program_name: requireText(form.program_name),
       title_suffix: optionalText(form.title_suffix),
     };
@@ -87,7 +87,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
       program_date: payload.program_date ? "" : "日付を入力してください。",
       start_time: !payload.start_time && payload.end_time ? "開始時刻を選択してください。" : "",
       end_time: payload.start_time && !payload.end_time ? "終了時刻を選択してください。" : "",
-      station_name: payload.station_name ? "" : "局を入力してください。",
+      media_name: payload.media_name ? "" : "媒体を入力してください。",
       program_name: payload.program_name ? "" : "番組名を入力してください。",
       title_suffix: "",
     };
@@ -119,7 +119,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
       program_date: item.program_date,
       start_time: item.start_time,
       end_time: item.end_time,
-      station_name: item.station_name,
+      media_name: item.media_name,
       program_name: item.program_name,
       title_suffix: item.title_suffix,
     });
@@ -170,7 +170,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                 <th className="sticky-action-column"></th>
                 <th>日付</th>
                 <th>時間</th>
-                <th>局</th>
+                <th>媒体</th>
                 <th>番組名</th>
               </tr>
             </thead>
@@ -186,7 +186,7 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
                   <td>
                     {formatTime(item.start_time, item.end_time)}
                   </td>
-                  <td>{item.station_name}</td>
+                  <td>{item.media_name}</td>
                   <td>{formatProgramName(item.program_name, item.title_suffix)}</td>
                 </tr>
               ))}
@@ -235,16 +235,16 @@ export function ExtraProgramManager({ items, onChanged, onNotify }: ExtraProgram
               />
             </div>
             <div className="field-label field-with-tooltip">
-              <span>局</span>
+              <span>媒体</span>
               <input
-                aria-label="局"
-                value={form.station_name}
+                aria-label="媒体"
+                value={form.media_name}
                 onChange={(event) => {
-                  setForm({ ...form, station_name: event.target.value });
-                  setFieldErrors({ ...fieldErrors, station_name: "" });
+                  setForm({ ...form, media_name: event.target.value });
+                  setFieldErrors({ ...fieldErrors, media_name: "" });
                 }}
               />
-              <FieldError message={fieldErrors.station_name} visibleKey={validationKey} />
+              <FieldError message={fieldErrors.media_name} visibleKey={validationKey} />
             </div>
             <div className="field-label field-with-tooltip">
               <span>番組名</span>
