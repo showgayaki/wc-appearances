@@ -34,12 +34,12 @@ jobs:
       - name: Dump schema
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: supabase db dump --db-url "$SUPABASE_DB_URL" -f "backups/${BACKUP_TIMESTAMP}_schema.sql"
+        run: supabase db dump --db-url "$SUPABASE_DB_URL" --schema public -f "backups/${BACKUP_TIMESTAMP}_schema.sql"
 
       - name: Dump data
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --use-copy -f "backups/${BACKUP_TIMESTAMP}_data.sql"
+        run: supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --use-copy --schema public -f "backups/${BACKUP_TIMESTAMP}_data.sql"
 
       - name: Compress backup files
         run: gzip -9 backups/*.sql
