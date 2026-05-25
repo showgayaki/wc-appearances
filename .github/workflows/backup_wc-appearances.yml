@@ -1,0 +1,56 @@
+name: Backup wc-appearances
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *" # JST 03:00
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    environment: wc-appearances
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Set backup timestamp
+        run: echo "BACKUP_TIMESTAMP=$(date -u +'%Y%m%dT%H%M%SZ')" >> "$GITHUB_ENV"
+
+      - name: Create backup directory
+        run: mkdir -p backups
+
+      - name: Dump schema
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: supabase db dump --db-url "$SUPABASE_DB_URL" -f "backups/${BACKUP_TIMESTAMP}_schema.sql"
+
+      - name: Dump data
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: supabase db dump --db-url "$SUPABASE_DB_URL" --data-only --use-copy -f "backups/${BACKUP_TIMESTAMP}_data.sql"
+
+      - name: Compress backup files
+        run: gzip -9 backups/*.sql
+
+      - name: Upload backup to Cloudflare R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          aws s3 cp "backups/${BACKUP_TIMESTAMP}_schema.sql.gz" "s3://${{ vars.R2_BUCKET }}/${{ vars.R2_PREFIX }}/${BACKUP_TIMESTAMP}_schema.sql.gz" \
+            --endpoint-url "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+            --only-show-errors
+          aws s3 cp "backups/${BACKUP_TIMESTAMP}_data.sql.gz" "s3://${{ vars.R2_BUCKET }}/${{ vars.R2_PREFIX }}/${BACKUP_TIMESTAMP}_data.sql.gz" \
+            --endpoint-url "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+            --only-show-errors
