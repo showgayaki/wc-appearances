@@ -49,12 +49,13 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} className="selectable-row" onClick={() => toggleItem(item.id)}>
                   <td className="check-column sticky-select-column">
                     <input
                       aria-label={`${item.programName}を出力対象にする`}
                       checked={selectedProgramIds.has(item.id)}
                       onChange={() => toggleItem(item.id)}
+                      onClick={(event) => event.stopPropagation()}
                       type="checkbox"
                     />
                   </td>
