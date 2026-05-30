@@ -1,5 +1,5 @@
-import type { GeneratedProgram } from "../types";
-import { formatDisplayDate } from "../utils/date";
+import type { GeneratedProgram } from "@/types";
+import { formatDisplayDate } from "@/utils/date";
 
 type PublicProgramsProps = {
   items: GeneratedProgram[];

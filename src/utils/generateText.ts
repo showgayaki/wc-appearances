@@ -1,5 +1,5 @@
-import type { GeneratedProgram, ExtraProgram, RegularProgram } from "../types";
-import { formatDisplayDate, getDatesInRange, getWeekday, timeToMinutes } from "./date";
+import type { GeneratedProgram, ExtraProgram, RegularProgram } from "@/types";
+import { formatDisplayDate, getDatesInRange, getWeekday, timeToMinutes } from "@/utils/date";
 
 export const buildGeneratedPrograms = (
   regularPrograms: RegularProgram[],

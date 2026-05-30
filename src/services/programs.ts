@@ -1,5 +1,5 @@
-import { supabase } from "../lib/supabase";
-import type { ExtraProgram, ExtraProgramInput, PostHeader, PostHeaderInput, ProgramInput, RegularProgram } from "../types";
+import { supabase } from "@/lib/supabase";
+import type { ExtraProgram, ExtraProgramInput, PostHeader, PostHeaderInput, ProgramInput, RegularProgram } from "@/types";
 
 export type ProgramData = {
   regularPrograms: RegularProgram[];

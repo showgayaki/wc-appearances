@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
-import { deleteExtraProgram, saveExtraProgram } from "../../services/programs";
-import type { ExtraProgram, ExtraProgramInput } from "../../types";
-import { getTodayYmd } from "../../utils/date";
-import { AdminConfirmModal } from "./AdminConfirmModal";
-import { AdminEditModal } from "./AdminEditModal";
-import { FieldError } from "./FieldError";
-import { TimeSelect } from "./TimeSelect";
+import { deleteExtraProgram, saveExtraProgram } from "@/services/programs";
+import type { ExtraProgram, ExtraProgramInput } from "@/types";
+import { getTodayYmd } from "@/utils/date";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { AdminEditModal } from "@/components/admin/AdminEditModal";
+import { FieldError } from "@/components/admin/FieldError";
+import { TimeSelect } from "@/components/admin/TimeSelect";
 
 const emptyExtraProgram = (): ExtraProgramInput => ({
   program_date: getTodayYmd(),

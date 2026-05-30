@@ -1,6 +1,6 @@
-import { APP_TITLE } from "../constants/app";
-import { AuthPanel } from "./AuthPanel";
-import { PageNav } from "./PageNav";
+import { APP_TITLE } from "@/constants/app";
+import { AuthPanel } from "@/components/AuthPanel";
+import { PageNav } from "@/components/PageNav";
 
 type AppHeaderProps = {
   isAdminPage: boolean;

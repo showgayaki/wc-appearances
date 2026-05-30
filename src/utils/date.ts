@@ -1,4 +1,4 @@
-import type { Weekday } from "../types";
+import type { Weekday } from "@/types";
 
 const weekdayLabels = ["日", "月", "火", "水", "木", "金", "土"] as const;
 

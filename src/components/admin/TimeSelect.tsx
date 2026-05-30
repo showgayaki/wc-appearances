@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Select, { type SingleValue, type StylesConfig } from "react-select";
-import { FieldError } from "./FieldError";
+import { FieldError } from "@/components/admin/FieldError";
 
 type TimeSelectProps = {
   label: string;

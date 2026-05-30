@@ -1,5 +1,5 @@
 import Select, { type SingleValue, type StylesConfig } from "react-select";
-import type { PostHeader } from "../types";
+import type { PostHeader } from "@/types";
 
 type PostHeaderOption = {
   value: string;

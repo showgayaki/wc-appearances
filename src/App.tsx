@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { ExtraProgramManager } from "./components/admin/ExtraProgramManager";
-import { PostHeaderManager } from "./components/admin/PostHeaderManager";
-import { RegularProgramManager } from "./components/admin/RegularProgramManager";
-import { AppHeader } from "./components/AppHeader";
-import { DateRangeToolbar } from "./components/DateRangeToolbar";
-import { GeneratedTextPanel } from "./components/GeneratedTextPanel";
-import { PostHeaderSelect } from "./components/PostHeaderSelect";
-import { PublicPrograms } from "./components/PublicPrograms";
-import { Snackbar } from "./components/Snackbar";
-import { isSupabaseConfigured, supabase } from "./lib/supabase";
-import { loadProgramData } from "./services/programs";
-import type { ExtraProgram, PostHeader, RegularProgram } from "./types";
-import type { SnackbarKind, SnackbarMessage } from "./components/Snackbar";
-import { getDefaultEndYmd, getTodayYmd } from "./utils/date";
-import { buildGeneratedPrograms, generateProgramText } from "./utils/generateText";
+import { ExtraProgramManager } from "@/components/admin/ExtraProgramManager";
+import { PostHeaderManager } from "@/components/admin/PostHeaderManager";
+import { RegularProgramManager } from "@/components/admin/RegularProgramManager";
+import { AppHeader } from "@/components/AppHeader";
+import { DateRangeToolbar } from "@/components/DateRangeToolbar";
+import { GeneratedTextPanel } from "@/components/GeneratedTextPanel";
+import { PostHeaderSelect } from "@/components/PostHeaderSelect";
+import { PublicPrograms } from "@/components/PublicPrograms";
+import { Snackbar } from "@/components/Snackbar";
+import type { SnackbarKind, SnackbarMessage } from "@/components/Snackbar";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { loadProgramData } from "@/services/programs";
+import type { ExtraProgram, PostHeader, RegularProgram } from "@/types";
+import { getDefaultEndYmd, getTodayYmd } from "@/utils/date";
+import { buildGeneratedPrograms, generateProgramText } from "@/utils/generateText";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);

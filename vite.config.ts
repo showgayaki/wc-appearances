@@ -3,6 +3,11 @@ import react from "@vitejs/plugin-react";
 import { APP_DESCRIPTION, APP_TITLE } from "./src/constants/app";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
   plugins: [
     react(),
     {
