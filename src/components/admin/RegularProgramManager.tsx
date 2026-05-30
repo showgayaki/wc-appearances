@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
-import { deleteRegularProgram, saveRegularProgram } from "../../services/programs";
-import type { ProgramInput, RegularProgram } from "../../types";
-import { getWeekdayLabel } from "../../utils/date";
-import { AdminConfirmModal } from "./AdminConfirmModal";
-import { AdminEditModal } from "./AdminEditModal";
-import { FieldError } from "./FieldError";
-import { TimeSelect } from "./TimeSelect";
-import { WeekdaySelect } from "./WeekdaySelect";
+import { deleteRegularProgram, saveRegularProgram } from "@/services/programs";
+import type { ProgramInput, RegularProgram } from "@/types";
+import { getWeekdayLabel } from "@/utils/date";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { AdminEditModal } from "@/components/admin/AdminEditModal";
+import { FieldError } from "@/components/admin/FieldError";
+import { TimeSelect } from "@/components/admin/TimeSelect";
+import { WeekdaySelect } from "@/components/admin/WeekdaySelect";
 
 const emptyRegularProgram: ProgramInput = {
   weekday: 1,

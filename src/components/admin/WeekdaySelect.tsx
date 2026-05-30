@@ -1,6 +1,6 @@
 import Select, { type SingleValue, type StylesConfig } from "react-select";
-import type { Weekday } from "../../types";
-import { getWeekdayLabel } from "../../utils/date";
+import type { Weekday } from "@/types";
+import { getWeekdayLabel } from "@/utils/date";
 
 type WeekdaySelectProps = {
   value: Weekday;

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import { FiEdit } from "react-icons/fi";
-import { deletePostHeader, savePostHeader } from "../../services/programs";
-import type { PostHeader, PostHeaderInput } from "../../types";
-import { AdminConfirmModal } from "./AdminConfirmModal";
-import { AdminEditModal } from "./AdminEditModal";
-import { FieldError } from "./FieldError";
+import { deletePostHeader, savePostHeader } from "@/services/programs";
+import type { PostHeader, PostHeaderInput } from "@/types";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { AdminEditModal } from "@/components/admin/AdminEditModal";
+import { FieldError } from "@/components/admin/FieldError";
 
 const emptyPostHeader = (): PostHeaderInput => ({
   title: "",

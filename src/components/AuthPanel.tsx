@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { isLoginConfigured, loginEmail, loginId, supabase } from "../lib/supabase";
+import { isLoginConfigured, loginEmail, loginId, supabase } from "@/lib/supabase";
 
 type AuthPanelProps = {
   isLoggedIn: boolean;
