@@ -16,6 +16,8 @@ const formatProgramName = (item: GeneratedProgram): string => {
 const formatSource = (item: GeneratedProgram): string => (item.source === "regular" ? "レギュラー" : "ゲスト・特番");
 
 export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedProgramIdsChange }: PublicProgramsProps) {
+  const selectedItemCount = items.filter((item) => selectedProgramIds.has(item.id)).length;
+
   const toggleItem = (id: string) => {
     const nextIds = new Set(selectedProgramIds);
     if (nextIds.has(id)) {
@@ -30,7 +32,7 @@ export function PublicPrograms({ items, loading, selectedProgramIds, onSelectedP
     <section className="list-panel">
       <div className="section-heading">
         <h2>出演番組選択</h2>
-        <span>{loading ? "読み込み中" : `${items.length}件`}</span>
+        <span>{loading ? "読み込み中" : `${selectedItemCount} / ${items.length} 件`}</span>
       </div>
       {items.length === 0 ? (
         <p className="empty">この期間の出演情報はありません。</p>
